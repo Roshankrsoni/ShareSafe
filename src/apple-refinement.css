@@ -1,0 +1,101 @@
+/* Quiet, macOS-inspired surfaces that follow ShareSafe's native app palette. */
+:root {
+  --apple-canvas: #f5f6f9;
+  --apple-surface: #fff;
+  --apple-grouped: #eef0f4;
+  --apple-separator: #e2e4e9;
+  --apple-label: #20232d;
+  --apple-secondary: #686c77;
+  --apple-accent: #de041f;
+  --apple-green: #34a853;
+  --apple-radius: 18px;
+}
+
+body { background: var(--apple-canvas); }
+.site-header { background: rgb(248 249 251 / 82%); border-bottom-color: rgb(32 35 45 / 8%); }
+.header-cta, .button-primary { box-shadow: 0 1px 2px rgb(0 0 0 / 9%); }
+.hero-stage { background: #eceef2; border-color: #e1e3e8; box-shadow: 0 18px 48px -34px rgb(32 35 45 / 38%); }
+.hero-stage:before { opacity: .45; }
+.hero>.ambient-hero { opacity: .07; }
+.trust-strip { color: #555a65; }
+
+.section-heading h2, .pricing-intro h2, .faq-section h2, .final-cta h2 { letter-spacing: -.055em; }
+.feature-grid { gap: 14px; }
+.feature-main, .feature-small {
+  border: 1px solid var(--apple-separator);
+  border-radius: var(--apple-radius);
+  box-shadow: 0 1px 2px rgb(23 28 38 / 4%), 0 8px 24px -20px rgb(23 28 38 / 24%);
+}
+.feature-main { background: var(--apple-grouped); }
+.feature-small, .feature-small.warm { background: var(--apple-surface); }
+.feature-main:hover, .feature-small:hover { border-color: #d2d5dc; box-shadow: 0 8px 20px -17px rgb(23 28 38 / 30%); }
+.small-icon { background: #fbe9ec; border-color: #f3d8dd; }
+.small-icon.green { background: #e9f7ed; border-color: #d9efdf; color: var(--apple-green); }
+.feature-tags span { background: #f5f6f8; border-color: #e5e6ea; }
+.format-line { border-top: 1px solid var(--apple-separator); padding-top: 20px; }
+
+.gallery-section { background: #eef0f4; border-block-color: #e3e5ea; }
+.gallery-buttons { background: #e3e5e9; border-color: #d9dbe1; }
+.gallery-buttons button.active { color: #242731; }
+.gallery-stage .mac-window-frame { box-shadow: 0 18px 44px -30px rgb(32 35 45 / 36%); }
+.workflow-theater { box-shadow: 0 18px 44px -30px rgb(32 35 45 / 48%); }
+.privacy-section { background: #232630; }
+.privacy-section:before { opacity: .45; }
+
+.pricing-section { gap: clamp(40px, 8vw, 112px); align-items: center; }
+.pricing-intro { max-width: 390px; }
+.pricing-intro h2 { max-width: 440px; font-size: clamp(38px, 3vw, 46px); }
+.pricing-note { display: inline-flex; padding: 13px 15px; gap: 12px; border: 1px solid var(--apple-separator); background: rgb(255 255 255 / 68%); border-radius: 13px; }
+.pricing-note > svg { color: #555b67; }
+.price-card {
+  position: relative;
+  max-width: 500px;
+  width: 100%;
+  padding: 30px;
+  border: 1px solid #dfe1e6;
+  border-radius: 20px;
+  background: var(--apple-surface);
+  box-shadow: 0 12px 36px -28px rgb(32 35 45 / 32%), 0 1px 2px rgb(32 35 45 / 4%);
+  backdrop-filter: none;
+}
+.price-card-top { padding-bottom: 20px; border-bottom: 1px solid #eceef1; }
+.price-card-top .brand { font-size: 19px; }
+.price-card-top .brand img { width: 25px; height: 29px; }
+.price-card .pill { color: #626671; background: #f3f4f6; border: 1px solid #e6e7eb; font-weight: 550; }
+.price-primary { display: flex; justify-content: space-between; align-items: end; gap: 18px; padding: 21px 0 18px; }
+.price-primary .price-label { margin: 0 0 5px; color: #737781; font-size: 11px; }
+.price { align-items: baseline; gap: 9px; }
+.price > span { font-size: 57px; line-height: 1; font-weight: 650; letter-spacing: -.075em; }
+.price > div { font-size: 10px; color: #6f737c; line-height: 1.45; }
+.price > div small { color: #858994; }
+.price-secondary { display: grid; grid-template-columns: 1fr auto; gap: 2px 14px; align-items: center; padding: 11px 13px; border: 1px solid #e8e9ed; border-radius: 12px; background: #f8f8fa; min-width: 170px; }
+.price-secondary-label { color: #777b84; font-size: 10px; grid-column: 1; }
+.price-secondary strong { color: #2c3039; font-size: 19px; grid-column: 2; grid-row: 1 / span 2; letter-spacing: -.04em; }
+.price-secondary > span:last-child { color: #656a74; font-size: 9px; grid-column: 1; }
+.launch-terms { display: flex; align-items: flex-start; gap: 11px; padding: 12px 13px; background: #f5f6f8; border: 1px solid #e8e9ed; border-radius: 12px; }
+.launch-terms > svg { flex: 0 0 auto; color: #777b84; }
+.launch-terms p, .launch-terms strong { color: #555a64; }
+.price-includes { display: grid; gap: 12px; padding: 20px 0; }
+.price-includes li { display: flex; align-items: center; gap: 10px; font-size: 11px; }
+.price-includes svg { flex: 0 0 auto; padding: 2px; width: 17px; height: 17px; border-radius: 50%; background: #eaf6ed; color: #2f9b4a; }
+.purchase-pending { justify-content: flex-start; background: #f5f6f8; border-color: #e6e7eb; color: #555a64; border-radius: 10px; }
+.purchase-pending .status-dot { background: #8b9099; box-shadow: 0 0 0 4px #8b909918; }
+.price-disclaimer { margin-top: 13px; color: #797d86; font-size: 9px; line-height: 1.6; text-align: left; }
+.price-card>.button { border-radius: 10px; }
+
+.faq-list, details { border-color: #e1e3e8; }
+.final-cta { background: #eef0f4; border-color: #e0e2e7; box-shadow: 0 8px 24px -22px rgb(32 35 45 / 24%); }
+.final-object .three-fallback { color: #de041f; }
+@media (max-width: 800px) {
+  .pricing-section { gap: 32px; }
+  .price-card { max-width: none; }
+}
+@media (max-width: 600px) {
+  .price-card { padding: 23px 20px; }
+  .price-primary { align-items: start; flex-direction: column; }
+  .price-secondary { width: 100%; grid-template-columns: 1fr auto; }
+  .pricing-note { margin-top: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+}

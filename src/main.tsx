@@ -7,6 +7,7 @@ import './reference.css';
 import './refresh.css';
 import './theme-shift.css';
 import './mac-app-theme.css';
+import './apple-refinement.css';
 const root=document.getElementById('root')!;
 if(root.hasChildNodes()) hydrateRoot(root,<StrictMode><App/></StrictMode>);
 else createRoot(root).render(<StrictMode><App/></StrictMode>);
