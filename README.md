@@ -39,3 +39,7 @@ For another static host, deploy the contents of `dist/`. Set `site.productionUrl
 ## Screenshots
 
 Originals live one directory up in `../public/images/product/`. `node scripts/prepare-images.mjs` produces WebP sizes, an honest cropped review panel, and the real-app social card. It requires those local source assets; normal builds use checked-in optimized derivatives and do not require the parent app. All documents shown are fictional.
+
+## Reference-inspired design and motion
+
+See `docs/design-and-motion.md` for the ox.lol pattern analysis, real Three.js rendering, interactive workflow and genuine-screenshot GIF. Theme refinement is in `premium.css` and `reference.css`; motion components are independently maintained. Regenerate the downloadable GIF with `node scripts/generate-workflow-gif.mjs`. It plays only on request, with a static poster by default. WebGL is optional, loaded separately, and the page remains usable without it.

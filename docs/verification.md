@@ -27,3 +27,11 @@ Production assets: approximately 252.45 KB JavaScript / 78.08 KB gzip, 24.12 KB 
 Lighthouse, axe, screen-reader testing, real touch hardware and cross-browser coverage were not run. Available browser tooling supports rendering, interactions and read-only DOM checks; no Lighthouse auditing API is exposed. No performance or WCAG certification score is claimed.
 
 Purchase processing, launch-cap concurrency, payment webhooks, downloads, licence activation, legal destinations and production-domain behavior cannot be end-to-end verified until their actual external services are provided. See `launch-readiness.md`. No payment was attempted or simulated.
+
+## Design and animation refresh — October 11
+
+Rebuilt and verified after the ox.lol-inspired design refresh. Build/type checks, lint and all six contract tests pass; npm audit reports zero known vulnerabilities. Vite flags the optional 565 KB uncompressed Three.js chunk; it is a separate dynamic import (about 144 KB gzip), not part of the 81 KB gzip initial application JavaScript.
+
+Browser checks: live WebGL canvas initialized with no console errors; 3D Pause changes to Play; workflow auto-advanced from 01 to 02; direct Review/Redact/Export, keyboard Enter, Replay back to 01, and Pause worked. GIF Play loads the actual GIF; Pause switches to WebP poster. Mobile navigation to the workflow works at 320px; workflow text and controls fit. Rendered widths 1440,1280,1024,768,390,320 match document widths without overflow. New palette text-contrast check found green eyebrow labels below 4.5:1; darkened them and reran with zero flagged non-decorative text nodes. No full accessibility certification is implied.
+
+The GIF was decoded with Sharp to confirm GIF format, 960px width, 700px frame height, 24 frames and 10.2-second loop duration. File size 1,476,531 bytes. Screenshots saved as ignored `artifacts/motion-*.png` and `artifacts/sharesafe-premium-hero.png`. OS-level reduced-motion emulation was not available; reduced-motion CSS and media-query behavior were inspected in source, not claimed as an automated OS test.
