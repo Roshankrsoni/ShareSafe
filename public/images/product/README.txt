@@ -1,0 +1,1 @@
+Genuine ShareSafe screenshots, captured October 10, 2026 using the fictional Northstar sample. Optimized derivatives only; no UI fabricated. Originals: ShareSafe/public/images/product/.
