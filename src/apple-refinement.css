@@ -9,11 +9,20 @@
   --apple-accent: #de041f;
   --apple-green: #34a853;
   --apple-radius: 18px;
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", sans-serif;
+  font-optical-sizing: auto;
 }
 
-body { background: var(--apple-canvas); }
+html { font-size: 100%; }
+body { background: var(--apple-canvas); font-optical-sizing: auto; font-kerning: normal; letter-spacing: 0; }
+h1 { line-height: 1.03; letter-spacing: -.055em; font-optical-sizing: auto; }
+h2 { line-height: 1.08; letter-spacing: -.04em; font-optical-sizing: auto; }
+h3 { line-height: 1.18; letter-spacing: -.025em; font-optical-sizing: auto; }
+p { line-height: 1.65; letter-spacing: 0; }
 .site-header { background: rgb(248 249 251 / 82%); border-bottom-color: rgb(32 35 45 / 8%); }
 .header-cta, .button-primary { box-shadow: 0 1px 2px rgb(0 0 0 / 9%); }
+.button, .header-cta, .gallery-buttons button, .workflow-timeline button, .play-control { touch-action: manipulation; }
+.button:active, .header-cta:active, .gallery-buttons button:active, .workflow-timeline button:active, .play-control:active { transform: scale(.975); transition-duration: 100ms; }
 .hero-stage { background: #eceef2; border-color: #e1e3e8; box-shadow: 0 18px 48px -34px rgb(32 35 45 / 38%); }
 .hero-stage:before { opacity: .45; }
 .hero>.ambient-hero { opacity: .07; }
@@ -82,6 +91,11 @@ body { background: var(--apple-canvas); }
 .purchase-pending .status-dot { background: #8b9099; box-shadow: 0 0 0 4px #8b909918; }
 .price-disclaimer { margin-top: 13px; color: #797d86; font-size: 9px; line-height: 1.6; text-align: left; }
 .price-card>.button { border-radius: 10px; }
+.feature-main, .feature-small { transition-duration: 180ms; }
+.feature-main:hover, .feature-small:hover { transform: translateY(-2px); }
+.gallery-buttons button { transition: background-color 140ms ease, color 140ms ease, border-color 140ms ease, transform 100ms ease; }
+.workflow-timeline button { transition: background-color 160ms ease, color 160ms ease; }
+.price-card .brand, .price-card .pill { flex-shrink: 0; }
 
 .faq-list, details { border-color: #e1e3e8; }
 .final-cta { background: #eef0f4; border-color: #e0e2e7; box-shadow: 0 8px 24px -22px rgb(32 35 45 / 24%); }
@@ -97,5 +111,17 @@ body { background: var(--apple-canvas); }
   .pricing-note { margin-top: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+  html { scroll-behavior: auto !important; }
+  .feature-main, .feature-small, .gallery-buttons button, .workflow-timeline button, .button, .header-cta { transition: color 120ms ease, background-color 120ms ease, border-color 120ms ease, opacity 120ms ease !important; }
+  .feature-main:hover, .feature-small:hover, .button:hover, .button:active, .header-cta:active, .gallery-buttons button:active, .workflow-timeline button:active, .play-control:active { transform: none !important; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .site-header, .mobile-nav, .mac-window-titlebar, .hero-notes span { background-color: #f5f6f9 !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .site-header { background-color: #f5f6f9 !important; }
+}
+@media (prefers-contrast: more) {
+  :root { --apple-secondary: #454953; --apple-separator: #aeb2bb; }
+  .feature-main, .feature-small, .price-card, .gallery-stage, .pricing-note { border-color: #9ea3ad; }
+  .hero-description, .section-heading>p, .feature-copy p, .feature-small p, .price-disclaimer, .footer-bottom { color: #454953; }
+  .header-cta, .button-primary { outline: 1px solid currentColor; outline-offset: 1px; }
 }
