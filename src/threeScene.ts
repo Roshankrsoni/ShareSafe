@@ -19,11 +19,11 @@ export function createScene(host: HTMLDivElement, variant: 'hero' | 'seal', onUn
   room.dispose(); pmrem.dispose();
   scene.add(new THREE.HemisphereLight(0xe8ffff, 0x233456, 1.4));
   const key = new THREE.DirectionalLight(0xffffff, 3); key.position.set(-3, 4, 5); scene.add(key);
-  const rim = new THREE.DirectionalLight(0xffd348, 2); rim.position.set(4, -2, 1); scene.add(rim);
-  const red = new THREE.MeshPhysicalMaterial({ color: 0xf1d94b, metalness: 0.28, roughness: 0.24, clearcoat: 1, clearcoatRoughness: 0.2 });
-  const ivory = new THREE.MeshStandardMaterial({ color: 0x172448, metalness: 0.1, roughness: 0.4 });
-  const graphite = new THREE.MeshStandardMaterial({ color: 0x172448, roughness: 0.5 });
-  const sage = new THREE.MeshStandardMaterial({ color: 0xe9c84a, metalness: 0.18, roughness: 0.3 });
+  const rim = new THREE.DirectionalLight(0x34c759, 2); rim.position.set(4, -2, 1); scene.add(rim);
+  const red = new THREE.MeshPhysicalMaterial({ color: 0xde041f, metalness: 0.28, roughness: 0.24, clearcoat: 1, clearcoatRoughness: 0.2 });
+  const ivory = new THREE.MeshStandardMaterial({ color: 0xf5f6f9, metalness: 0.1, roughness: 0.4 });
+  const graphite = new THREE.MeshStandardMaterial({ color: 0x20232d, roughness: 0.5 });
+  const sage = new THREE.MeshStandardMaterial({ color: 0xc6e8cf, metalness: 0.18, roughness: 0.3 });
   const shieldShape = new THREE.Shape();
   shieldShape.moveTo(0,1.15); shieldShape.lineTo(.93,.8); shieldShape.lineTo(.85,-.15); shieldShape.quadraticCurveTo(.72,-.83,0,-1.17); shieldShape.quadraticCurveTo(-.72,-.83,-.85,-.15); shieldShape.lineTo(-.93,.8); shieldShape.closePath();
   const shield = new THREE.Group();
