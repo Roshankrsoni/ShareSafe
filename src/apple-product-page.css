@@ -250,3 +250,130 @@ details p { color: #606570; font-size: .85rem; line-height: 1.6; }
   .faq-section { grid-template-columns: 1fr; gap: 1.5rem; }
   .final-cta { padding: 2.5rem 1.25rem; margin-bottom: 3rem; }
 }
+
+/* Appearance control and semantic surface tokens. The red and green remain true to the Mac app. */
+.hero { background: var(--page-canvas); }
+.hero:before { display: none; }
+body, .site-header, .hero-stage, .feature-main, .feature-small, .gallery-section, .gallery-buttons, .price-card, .pricing-note, .final-cta { transition: background-color 180ms ease, border-color 180ms ease, color 180ms ease; }
+.appearance-control { display: inline-flex; align-items: center; gap: .4rem; min-height: 2.35rem; padding: 0 .65rem; border: 1px solid var(--page-rule); border-radius: .7rem; background: var(--page-panel); color: var(--page-ink); }
+.appearance-control select { max-width: 5.2rem; border: 0; outline: 0; background: transparent; color: inherit; font: inherit; font-size: .76rem; cursor: pointer; }
+.appearance-control select option { background: var(--page-panel); color: var(--page-ink); }
+.appearance-icon { display: inline-flex; color: var(--page-secondary); }
+.appearance-control:focus-within { outline: 3px solid color-mix(in srgb, var(--page-red) 60%, transparent); outline-offset: 2px; }
+.mobile-appearance { display: none; }
+.visually-hidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --page-canvas: #0b0b0f;
+  --page-panel: #18181f;
+  --page-group: #111116;
+  --page-ink: #f5f5f7;
+  --page-secondary: #b5b5be;
+  --page-rule: #2a2a33;
+  --page-red: #de253d;
+  --page-green: #55d879;
+  --color-brand: #de253d;
+  --color-ink: #f5f5f7;
+  --color-muted: #b5b5be;
+  --color-paper: #0b0b0f;
+  --cobalt: #de253d;
+  --signal: #de253d;
+  --night: #0b0b0f;
+  --paper: #0b0b0f;
+}
+html[data-theme="dark"] body { color: var(--page-ink); background: var(--page-canvas); }
+html[data-theme="dark"] p { color: var(--page-secondary); }
+html[data-theme="dark"] h1, html[data-theme="dark"] h2, html[data-theme="dark"] h3 { color: var(--page-ink); }
+html[data-theme="dark"] .site-header { background: rgb(17 17 22 / 84%); border-bottom-color: rgb(255 255 255 / 9%); }
+html[data-theme="dark"] .brand, html[data-theme="dark"] .desktop-nav, html[data-theme="dark"] .desktop-nav a { color: #f5f5f7; }
+html[data-theme="dark"] .desktop-nav a:hover, html[data-theme="dark"] .footer a:hover { color: #ff7888; }
+html[data-theme="dark"] .header-cta, html[data-theme="dark"] .button-primary { background: #de253d; color: #fff; }
+html[data-theme="dark"] .header-cta:hover, html[data-theme="dark"] .button-primary:hover { background: #f04458; }
+html[data-theme="dark"] .mobile-nav { background: #111116; border-color: var(--page-rule); }
+html[data-theme="dark"] .mobile-nav a, html[data-theme="dark"] .icon-button { color: var(--page-ink); }
+html[data-theme="dark"] .appearance-control { background: #18181f; border-color: #383842; color: #f5f5f7; }
+html[data-theme="dark"] .appearance-icon { color: #f2c66d; }
+html[data-theme="dark"] .hero-copy .eyebrow, html[data-theme="dark"] .eyebrow.muted { color: #b9bac3; }
+html[data-theme="dark"] .gallery-section .section-heading.centered h2 { color: #f5f5f7; }
+html[data-theme="dark"] .hero h1 { color: #f5f5f7; }
+html[data-theme="dark"] .hero h1 span { color: #b9bac3; }
+html[data-theme="dark"] .hero-description, html[data-theme="dark"] .hero-notes, html[data-theme="dark"] .hero-notes svg { color: #b5b5be; }
+html[data-theme="dark"] .hero .text-link { color: #e8e8ed; }
+html[data-theme="dark"] .hero-stage { border-color: #2d2d36; background: linear-gradient(180deg, #18181f, #14141a); box-shadow: 0 2rem 5rem -3.6rem rgb(0 0 0 / 80%); }
+html[data-theme="dark"] .hero>.ambient-hero { display: none; }
+html[data-theme="dark"] .stage-label, html[data-theme="dark"] .trust-strip { color: #b5b5be; }
+html[data-theme="dark"] .trust-strip { border-color: var(--page-rule); }
+html[data-theme="dark"] .section-heading>p, html[data-theme="dark"] .feature-copy p, html[data-theme="dark"] .feature-small p, html[data-theme="dark"] .pricing-intro>p, html[data-theme="dark"] .faq-section>div:first-child>p { color: #b5b5be; }
+html[data-theme="dark"] .feature-main { background: #15151c; border-color: #2a2a33; }
+html[data-theme="dark"] .feature-small, html[data-theme="dark"] .feature-small.warm { background: #18181f; border-color: #2a2a33; }
+html[data-theme="dark"] .feature-main:hover, html[data-theme="dark"] .feature-small:hover { border-color: #464650; box-shadow: 0 12px 28px -24px rgb(0 0 0 / 85%); }
+html[data-theme="dark"] .feature-index { color: #aaaab5; }
+html[data-theme="dark"] .small-icon { background: #351c24; border-color: #51212b; color: #ff7182; }
+html[data-theme="dark"] .small-icon.green { background: #153321; border-color: #245333; color: #67dc86; }
+html[data-theme="dark"] .feature-tags span { background: #22222a; border-color: #393943; color: #cdced5; }
+html[data-theme="dark"] .feature-screenshot { border-color: #34343d; }
+html[data-theme="dark"] .format-line { border-color: var(--page-rule); color: #b5b5be; }
+html[data-theme="dark"] .format-line span:last-child { color: #73db8b; }
+html[data-theme="dark"] .gallery-section { background: #111116; border-color: #25252d; }
+html[data-theme="dark"] .gallery-buttons { background: #1a1a21; border-color: #303039; }
+html[data-theme="dark"] .gallery-buttons button { color: #c5c5ce; }
+html[data-theme="dark"] .gallery-buttons button:hover { background: #292931; }
+html[data-theme="dark"] .gallery-buttons button.active { background: #393942; color: #fff; box-shadow: 0 1px 3px rgb(0 0 0 / 38%); }
+html[data-theme="dark"] .gallery-stage.receipt-stage { background: #17171e; border-color: #2f2f38; }
+html[data-theme="dark"] figcaption span, html[data-theme="dark"] .image-note { color: #b5b5be; }
+html[data-theme="dark"] .workflow-note { color: #aaaab5; }
+html[data-theme="dark"] .document-illustration, html[data-theme="dark"] .document-illustration h3 { color: #20232d; }
+html[data-theme="dark"] .film-frame { background: #18181f; border-color: #303039; }
+html[data-theme="dark"] .film-frame figcaption { color: #c2c2ca; border-color: #303039; }
+html[data-theme="dark"] .privacy-section { background: #15151b; }
+html[data-theme="dark"] .privacy-section:before { background: radial-gradient(ellipse at 92% 6%, rgb(222 37 61 / 10%), transparent 40%); }
+html[data-theme="dark"] .privacy-copy .eyebrow { color: #d4d4db; }
+html[data-theme="dark"] .privacy-copy h2 span { color: #9be6ad; }
+html[data-theme="dark"] .privacy-copy>p, html[data-theme="dark"] .privacy-facts p, html[data-theme="dark"] .privacy-facts .privacy-footnote { color: #bfc0c8; }
+html[data-theme="dark"] .privacy-signoff { color: #f0f1f4; }
+html[data-theme="dark"] .privacy-signoff svg, html[data-theme="dark"] .privacy-facts article>svg { color: #75dc8f; }
+html[data-theme="dark"] .privacy-facts article { border-color: rgb(255 255 255 / 14%); }
+html[data-theme="dark"] .pricing-note, html[data-theme="dark"] .price-card { background: #18181f; border-color: #303039; color: #f5f5f7; }
+html[data-theme="dark"] .pricing-note small, html[data-theme="dark"] .price-card p { color: #b5b5be; }
+html[data-theme="dark"] .price-card-top .pill { color: #d1d1d8; background: #24242c; border-color: #3a3a44; }
+html[data-theme="dark"] .price-primary { border-color: #303039; }
+html[data-theme="dark"] .price > span, html[data-theme="dark"] .price-secondary strong { color: #f5f5f7; }
+html[data-theme="dark"] .price > div, html[data-theme="dark"] .price > div small, html[data-theme="dark"] .price-primary .price-label { color: #b5b5be; }
+html[data-theme="dark"] .price-secondary { background: #22222a; border-color: #383842; }
+html[data-theme="dark"] .price-secondary-label, html[data-theme="dark"] .price-secondary>span:last-child { color: #c0c0c8; }
+html[data-theme="dark"] .launch-terms { background: #22222a; border-color: #383842; color: #f0f0f4; }
+html[data-theme="dark"] .launch-terms p { color: #d0d0d7; }
+html[data-theme="dark"] .price-includes li { color: #d3d3da; }
+html[data-theme="dark"] .price-includes svg { color: #63db83; }
+html[data-theme="dark"] .purchase-pending { background: #22222a; color: #e1e1e6; }
+html[data-theme="dark"] .price-disclaimer { color: #aaaab5; }
+html[data-theme="dark"] .faq-list, html[data-theme="dark"] details { border-color: #303039; }
+html[data-theme="dark"] summary { color: #ededf1; }
+html[data-theme="dark"] summary:hover { color: #ff7888; }
+html[data-theme="dark"] details p { color: #bdbdc6; }
+html[data-theme="dark"] .final-cta { background: #15151c; border-color: #303039; box-shadow: 0 1rem 2.8rem -2.4rem rgb(0 0 0 / 80%); }
+html[data-theme="dark"] .final-cta p, html[data-theme="dark"] .final-note { color: #b5b5be; }
+html[data-theme="dark"] .final-object .three-fallback { color: #ff687b; }
+html[data-theme="dark"] .footer-main p, html[data-theme="dark"] .footer-bottom { color: #aaaab5; }
+html[data-theme="dark"] .footer-bottom { border-color: var(--page-rule); }
+html[data-theme="dark"] .skip-link { background: #f5f5f7; color: #111116; }
+html[data-theme="dark"] :focus-visible { outline-color: #ff7888; }
+
+html[data-theme="light"] { color-scheme: light; }
+@media (prefers-reduced-motion: reduce) {
+  body, .site-header, .hero-stage, .feature-main, .feature-small, .gallery-section, .gallery-buttons, .price-card, .pricing-note, .final-cta { transition: none; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  html[data-theme="dark"] .site-header, html[data-theme="dark"] .mobile-nav { background: #111116 !important; }
+}
+@media (prefers-contrast: more) {
+  html[data-theme="dark"] .hero-description, html[data-theme="dark"] .section-heading>p, html[data-theme="dark"] .feature-copy p, html[data-theme="dark"] .feature-small p, html[data-theme="dark"] .price-disclaimer, html[data-theme="dark"] .footer-bottom { color: #f0f0f4; }
+  html[data-theme="dark"] .feature-main, html[data-theme="dark"] .feature-small, html[data-theme="dark"] .price-card, html[data-theme="dark"] .pricing-note { border-color: #777780; }
+}
+@media (max-width: 680px) {
+  .header-actions > .appearance-control { display: none; }
+  .mobile-appearance { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: .8rem 0; border-top: 1px solid var(--page-rule); color: var(--page-secondary); font-size: .86rem; }
+  .mobile-nav { padding-bottom: .8rem; }
+  html[data-theme="dark"] .mobile-appearance { border-color: var(--page-rule); color: #c8c8d0; }
+}

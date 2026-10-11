@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { ArrowRight, ArrowUpRight, Check, ChevronDown, ChevronRight, Command, Eye, FileCheck2, Fingerprint, LockKeyhole, Menu, Monitor, ScanText, ShieldCheck, SlidersHorizontal, Sparkles, X } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Check, ChevronDown, ChevronRight, Command, Eye, FileCheck2, Fingerprint, LockKeyhole, Menu, Monitor, Moon, ScanText, ShieldCheck, SlidersHorizontal, Sparkles, Sun, X } from 'lucide-react';
 import { gallery, faqs } from './content';
 import { pricing, purchaseState } from './config';
 import { track } from './analytics';
@@ -9,6 +9,25 @@ import WorkflowGif from './WorkflowGif';
 import { useReveal } from './useReveal';
 
 const nav = [['Product','#product'],['Features','#features'],['How it works','#how-it-works'],['Privacy','#privacy'],['FAQ','#faq']];
+type Appearance = 'system' | 'light' | 'dark';
+function getInitialAppearance(): Appearance {
+ if(typeof document==='undefined')return 'system';
+ const preference=document.documentElement.dataset.themePreference;
+ return preference==='light'||preference==='dark'?preference:'system';
+}
+function applyAppearance(preference:Appearance) {
+ const dark=preference==='dark'||(preference==='system'&&window.matchMedia('(prefers-color-scheme: dark)').matches);
+ document.documentElement.dataset.theme=dark?'dark':'light';
+ document.documentElement.dataset.themePreference=preference;
+ document.documentElement.style.colorScheme=dark?'dark':'light';
+ document.querySelector('meta[name="theme-color"]')?.setAttribute('content',dark?'#0b0b0f':'#f5f6f9');
+}
+function AppearanceControl(){
+ const [appearance,setAppearance]=useState<Appearance>(getInitialAppearance);
+ useEffect(()=>{applyAppearance(appearance);try{if(appearance==='system')localStorage.removeItem('sharesafe-appearance');else localStorage.setItem('sharesafe-appearance',appearance);}catch{/* The active appearance still applies when storage is unavailable. */}},[appearance]);
+ useEffect(()=>{const media=window.matchMedia('(prefers-color-scheme: dark)');const update=()=>{if(appearance==='system')applyAppearance('system');};media.addEventListener('change',update);return()=>media.removeEventListener('change',update);},[appearance]);
+ return <label className="appearance-control"><span className="appearance-icon" aria-hidden="true">{appearance==='system'?<Monitor size={16}/>:appearance==='dark'?<Moon size={16}/>:<Sun size={16}/>}</span><span className="visually-hidden">Website appearance</span><select aria-label="Website appearance" value={appearance} onChange={event=>setAppearance(event.target.value as Appearance)}><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label>;
+}
 function Brand() { return <a className="brand" href="#top" aria-label="ShareSafe home"><img src="/favicon.svg" width="32" height="36" alt=""/>ShareSafe<span className="brand-dot">.</span></a>; }
 function PurchaseLink({location, secondary=false}:{location:string;secondary?:boolean}) {
  const state=purchaseState(pricing);
@@ -22,7 +41,7 @@ function MacWindowFrame({children}:{children:ReactNode}){return <div className="
 function Header() {
  const [open,setOpen]=useState(false); const toggle=useRef<HTMLButtonElement>(null);
  useEffect(()=>{ if(!open)return; const escape=(event:KeyboardEvent)=>{if(event.key==='Escape'){setOpen(false);toggle.current?.focus();}}; window.addEventListener('keydown',escape);return()=>window.removeEventListener('keydown',escape); },[open]);
- return <header className="site-header"><div className="shell header-inner"><Brand/><nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label,href])=><a key={href} href={href}>{label}</a>)}</nav><div className="header-actions"><a className="header-cta" href="#pricing" onClick={()=>track('pricing_click',{location:'header'})}>Pricing<ArrowUpRight size={16}/></a><button ref={toggle} className="menu-toggle icon-button" aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="mobile-navigation" onClick={()=>setOpen(!open)}>{open?<X/>:<Menu/>}</button></div></div><nav id="mobile-navigation" className="mobile-nav shell" aria-label="Mobile navigation" hidden={!open}>{nav.map(([label,href])=><a key={href} href={href} onClick={()=>setOpen(false)}>{label}<ArrowRight size={16}/></a>)}<a href="#pricing" onClick={()=>setOpen(false)}>Pricing<ArrowRight size={16}/></a></nav></header>;
+ return <header className="site-header"><div className="shell header-inner"><Brand/><nav className="desktop-nav" aria-label="Main navigation">{nav.map(([label,href])=><a key={href} href={href}>{label}</a>)}</nav><div className="header-actions"><AppearanceControl/><a className="header-cta" href="#pricing" onClick={()=>track('pricing_click',{location:'header'})}>Pricing<ArrowUpRight size={16}/></a><button ref={toggle} className="menu-toggle icon-button" aria-label={open?'Close navigation':'Open navigation'} aria-expanded={open} aria-controls="mobile-navigation" onClick={()=>setOpen(!open)}>{open?<X/>:<Menu/>}</button></div></div><nav id="mobile-navigation" className="mobile-nav shell" aria-label="Mobile navigation" hidden={!open}>{nav.map(([label,href])=><a key={href} href={href} onClick={()=>setOpen(false)}>{label}<ArrowRight size={16}/></a>)}<a href="#pricing" onClick={()=>setOpen(false)}>Pricing<ArrowRight size={16}/></a><div className="mobile-appearance"><span>Appearance</span><AppearanceControl/></div></nav></header>;
 }
 function Hero() {return <section className="hero shell" id="product"><div className="hero-copy"><div className="eyebrow"><span className="status-dot"/> THE PRIVACY CHECK BEFORE YOU SEND</div><h1>Good to share.<br/><span>Keep the details yours.</span></h1><p className="hero-description">Review sensitive details, choose what to hide, and export a protected copy—all on your Mac.</p><div className="hero-actions"><PurchaseLink location="hero"/><a className="text-link" href="#demo" onClick={()=>track('demo_view',{location:'hero'})}>Explore the app <ArrowRight size={17}/></a></div><div className="hero-notes"><span><Monitor size={14}/> macOS 14+</span><span><LockKeyhole size={14}/> On-device processing</span><span>No subscription</span></div></div><div className="hero-stage"><div className="stage-label"><span><span className="status-dot"/> REAL APP · FICTIONAL DOCUMENT</span><span>Made for the moment before “Send” <ArrowDownSmall/></span></div><MacWindowFrame><ProductImage hero name="02-pdf-detection-workspace" alt="ShareSafe's Mac workspace reviewing email, phone and payment-card suggestions in a fictional Northstar project brief."/></MacWindowFrame></div><div className="trust-strip"><span><ShieldCheck/>Your files stay on your Mac</span><span><SlidersHorizontal/>You make the final call</span><span><FileCheck2/>Your original stays untouched</span></div></section>;}
 function ArrowDownSmall(){return <ArrowRight size={14} className="rotate-90"/>;}
