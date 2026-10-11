@@ -20,8 +20,8 @@ export function createScene(host: HTMLDivElement, variant: 'hero' | 'seal', onUn
   scene.add(new THREE.HemisphereLight(0xe8ffff, 0x233456, 1.4));
   const key = new THREE.DirectionalLight(0xffffff, 3); key.position.set(-3, 4, 5); scene.add(key);
   const rim = new THREE.DirectionalLight(0xffd348, 2); rim.position.set(4, -2, 1); scene.add(rim);
-  const red = new THREE.MeshPhysicalMaterial({ color: 0x244dff, metalness: 0.28, roughness: 0.24, clearcoat: 1, clearcoatRoughness: 0.2 });
-  const ivory = new THREE.MeshStandardMaterial({ color: 0xf7f6ef, metalness: 0.1, roughness: 0.4 });
+  const red = new THREE.MeshPhysicalMaterial({ color: 0xf1d94b, metalness: 0.28, roughness: 0.24, clearcoat: 1, clearcoatRoughness: 0.2 });
+  const ivory = new THREE.MeshStandardMaterial({ color: 0x172448, metalness: 0.1, roughness: 0.4 });
   const graphite = new THREE.MeshStandardMaterial({ color: 0x172448, roughness: 0.5 });
   const sage = new THREE.MeshStandardMaterial({ color: 0xe9c84a, metalness: 0.18, roughness: 0.3 });
   const shieldShape = new THREE.Shape();
