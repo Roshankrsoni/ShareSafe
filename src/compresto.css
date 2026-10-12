@@ -1,0 +1,679 @@
+/* NOTE: display font is loaded in index.html (Roboto). */
+
+/* ============================================================
+   ShareSafe — Compresto pattern edition
+   Applies compresto.app's page pattern: announcement bar, narrow
+   centered hero with badge + social proof + stats, before/after
+   diff blocks, 2×2 workflow grid, file strip, centered FAQ,
+   banner CTA and multi-column footer. Loaded last — wins.
+   ============================================================ */
+
+:root,
+html[data-theme="light"] {
+  --cp-bg: #fafafa;
+  --cp-card: #ffffff;
+  --cp-ink: #0a0a0b;
+  --cp-gray: #636366;
+  --cp-faint: #8e8e93;
+  --cp-line: #e9e9ee;
+  --cp-chip: #f1f1f4;
+  --cp-btn: #111113;
+  --cp-btn-hover: #000000;
+  --cp-btn-ink: #ffffff;
+  --cp-shadow: 0 1px 2px rgba(10, 10, 11, 0.05), 0 12px 32px -16px rgba(10, 10, 11, 0.18);
+  --cp-shadow-lg: 0 2px 6px rgba(10, 10, 11, 0.06), 0 32px 80px -32px rgba(10, 10, 11, 0.3);
+}
+
+html[data-theme="dark"] {
+  --cp-bg: #0c0c0d;
+  --cp-card: #17171a;
+  --cp-ink: #f5f5f7;
+  --cp-gray: #a7a7ad;
+  --cp-faint: #86868b;
+  --cp-line: #2a2a2e;
+  --cp-chip: #222226;
+  --cp-btn: #f5f5f7;
+  --cp-btn-hover: #ffffff;
+  --cp-btn-ink: #0a0a0b;
+  --cp-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -16px rgba(0, 0, 0, 0.6);
+  --cp-shadow-lg: 0 2px 6px rgba(0, 0, 0, 0.4), 0 32px 80px -32px rgba(0, 0, 0, 0.8);
+}
+
+/* ---------- Base: Compresto's clean canvas ---------- */
+body {
+  background: var(--cp-bg) !important;
+  color: var(--cp-ink) !important;
+  font-family: "Onest", -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif !important;
+  letter-spacing: -0.015em !important;
+}
+body::before { background: var(--cp-bg) !important; }
+body::after { display: none !important; }
+
+h1, h2, h3 {
+  color: var(--cp-ink) !important;
+  font-family: "Onest", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif !important;
+  letter-spacing: -0.035em !important;
+}
+p { color: var(--cp-gray) !important; }
+::selection { background: rgba(10, 10, 11, 0.14); }
+html[data-theme="dark"] ::selection { background: rgba(245, 245, 247, 0.25); }
+:focus-visible { outline-color: var(--cp-ink) !important; }
+
+.shell { width: min(1120px, calc(100% - 48px)) !important; }
+.section,
+.gallery-section,
+.workflow { padding-block: clamp(52px, 6.5vw, 84px) !important; }
+
+/* Centered Compresto section headings */
+.section-heading.center {
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  gap: 12px !important;
+  max-width: 760px;
+  margin: 0 auto clamp(26px, 3.4vw, 40px) !important;
+}
+.section-heading.center h2 { font-size: clamp(32px, 4.6vw, 52px) !important; line-height: 1.06 !important; }
+.section-heading.center > p { max-width: 560px !important; font-size: 17px !important; margin: 0 auto; }
+.section-heading.center .eyebrow { justify-content: center !important; }
+
+.eyebrow,
+.eyebrow.muted {
+  color: var(--cp-faint) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+}
+
+/* ---------- Announcement bar ---------- */
+.announce-bar {
+  background: var(--cp-chip);
+  border-bottom: 1px solid var(--cp-line);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cp-gray);
+  padding: 9px 16px;
+}
+.announce-bar a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  justify-content: center;
+  color: var(--cp-gray) !important;
+  text-decoration: none !important;
+}
+.announce-bar strong {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--cp-ink) !important;
+  font-weight: 700;
+}
+.announce-bar a:hover strong { text-decoration: underline; text-underline-offset: 3px; }
+
+/* ---------- Header: Compresto's simple bar ---------- */
+.site-header {
+  background: color-mix(in srgb, var(--cp-bg) 82%, transparent) !important;
+  border-bottom: 1px solid var(--cp-line) !important;
+  height: 60px !important;
+}
+.site-header::after { display: none !important; }
+.header-inner { height: 60px !important; }
+.brand { color: var(--cp-ink) !important; font-family: "Onest", sans-serif !important; font-weight: 800 !important; }
+.brand-dot { display: none; }
+.desktop-nav { color: var(--cp-ink) !important; font-size: 14px !important; font-weight: 500 !important; gap: 26px !important; }
+.header-cta,
+.button-primary {
+  background: var(--cp-btn) !important;
+  color: var(--cp-btn-ink) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18) !important;
+}
+.header-cta:hover,
+.button-primary:hover { background: var(--cp-btn-hover) !important; }
+html[data-theme="dark"] .header-cta,
+html[data-theme="dark"] .button-primary { box-shadow: 0 2px 16px rgba(255, 255, 255, 0.14) !important; }
+
+/* ---------- Hero: narrow, centered, proof-stacked ---------- */
+.hero.shell { width: min(960px, calc(100% - 48px)) !important; padding-top: clamp(48px, 6vw, 84px) !important; }
+.hero-copy .eyebrow {
+  background: var(--cp-chip) !important;
+  border: 1px solid var(--cp-line) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  color: var(--cp-gray) !important;
+  font-size: 12.5px !important;
+  letter-spacing: 0.01em !important;
+  padding: 8px 16px 8px 12px !important;
+  gap: 8px;
+}
+.hero-copy .eyebrow svg { color: var(--cp-ink); }
+.hero-copy .eyebrow .pill-icon { display: none !important; }
+.hero h1 { font-size: clamp(42px, 6.4vw, 68px) !important; line-height: 1.04 !important; animation: cp-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both; }
+.hero h1 span {
+  color: var(--cp-ink) !important;
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+}
+.hero-description { font-size: clamp(16px, 2vw, 19px) !important; max-width: 640px !important; color: var(--cp-gray) !important; }
+.hero-actions .button { min-height: 52px !important; padding: 0 30px !important; font-size: 15.5px !important; }
+.hero-actions .button-light {
+  background: var(--cp-card) !important;
+  color: var(--cp-ink) !important;
+  border: 1px solid var(--cp-line) !important;
+  box-shadow: var(--cp-shadow) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+.hero-caption {
+  margin-top: 16px !important;
+  font-size: 13px !important;
+  font-weight: 500;
+  color: var(--cp-faint) !important;
+  animation: cp-rise 0.7s 0.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Social proof: avatar stack + copy */
+.social-proof {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 22px;
+  text-align: left;
+  animation: cp-rise 0.7s 0.24s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.avatar-stack { display: flex; align-items: center; }
+.avatar-stack i {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 800;
+  color: #fff;
+  border: 2.5px solid var(--cp-bg);
+  margin-left: -10px;
+}
+.avatar-stack i:first-child { margin-left: 0; }
+.avatar-stack i:nth-child(1) { background: linear-gradient(135deg, #0071e3, #5e5ce6); }
+.avatar-stack i:nth-child(2) { background: linear-gradient(135deg, #1d8127, #30d158); }
+.avatar-stack i:nth-child(3) { background: linear-gradient(135deg, #ff9f0a, #ff6482); }
+.avatar-stack i:nth-child(4) { background: var(--cp-btn); color: var(--cp-btn-ink); font-size: 14px; }
+.social-proof-copy { display: flex; flex-direction: column; gap: 2px; }
+.social-proof-copy strong { font-size: 14.5px; font-weight: 700; color: var(--cp-ink); letter-spacing: -0.01em; }
+.social-proof-copy small { font-size: 13px; color: var(--cp-gray); line-height: 1.45; }
+
+/* Hero stats: Compresto's counters */
+.hero-stats {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0 0;
+  padding: 0;
+  width: 100%;
+}
+.hero-stats > div {
+  flex: 1;
+  background: var(--cp-card);
+  border: 1px solid var(--cp-line);
+  border-radius: 18px;
+  box-shadow: var(--cp-shadow);
+  padding: 14px 10px 12px;
+  text-align: center;
+  margin: 0;
+}
+.hero-stats dt { font-size: clamp(26px, 3.4vw, 34px); font-weight: 800; letter-spacing: -0.04em; color: var(--cp-ink); }
+.hero-stats dt span { font-size: 0.55em; font-weight: 700; color: var(--cp-gray); margin-left: 2px; }
+.hero-stats dd { margin: 4px 0 0; font-size: 12.5px; font-weight: 600; color: var(--cp-gray); }
+
+/* Hero stage: Compresto's big app shot */
+.hero-stage {
+  width: 100% !important;
+  background: var(--cp-card) !important;
+  border: 1px solid var(--cp-line) !important;
+  box-shadow: var(--cp-shadow-lg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 22px !important;
+  padding: 10px !important;
+}
+.hero-stage::before,
+.hero-stage::after { display: none !important; }
+.stage-label { color: var(--cp-faint) !important; }
+.mac-window-frame { border: 1px solid var(--cp-line) !important; box-shadow: none !important; border-radius: 14px !important; }
+.mac-window-titlebar {
+  background: var(--cp-chip) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid var(--cp-line) !important;
+}
+.mac-window-title { color: var(--cp-gray) !important; }
+.liquid-search { background: var(--cp-card) !important; border: 1px solid var(--cp-line) !important; color: var(--cp-faint) !important; }
+.liquid-share { background: var(--cp-btn) !important; color: var(--cp-btn-ink) !important; box-shadow: none !important; }
+.mac-window-content { background: var(--cp-card) !important; }
+.liquid-chips { padding: 0 18px 18px; }
+.liquid-chip {
+  background: color-mix(in srgb, var(--cp-card) 88%, transparent) !important;
+  border: 1px solid var(--cp-line) !important;
+  box-shadow: var(--cp-shadow) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  color: var(--cp-ink) !important;
+  border-radius: 14px !important;
+  animation: none !important;
+}
+.liquid-chip svg { color: var(--cp-ink) !important; }
+.chip-dot { background: var(--cp-ink) !important; box-shadow: none !important; }
+
+/* Trust strip → Compresto badge row */
+.trust-strip { width: 100% !important; gap: 10px 26px !important; padding: 20px 8px 0 !important; }
+.trust-strip span { font-size: 13.5px !important; font-weight: 600 !important; color: var(--cp-gray) !important; }
+.trust-strip svg { color: var(--cp-ink) !important; }
+
+/* ---------- Diff blocks: Compresto's signature ---------- */
+.diff-section .shell, .diff-section { width: min(1120px, calc(100% - 48px)); margin-inline: auto; }
+.diff-list { display: flex; flex-direction: column; gap: clamp(16px, 2.4vw, 24px); }
+.diff-row {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: clamp(24px, 4vw, 56px);
+  align-items: center;
+  background: var(--cp-card);
+  border: 1px solid var(--cp-line);
+  border-radius: 24px;
+  box-shadow: var(--cp-shadow);
+  padding: clamp(20px, 3vw, 34px);
+}
+.diff-row:nth-child(even) .diff-copy { order: 2; }
+.diff-row:nth-child(even) .diff-pair { order: 1; }
+.diff-copy { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.diff-pill {
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--cp-ink);
+  background: var(--cp-chip);
+  border: 1px solid var(--cp-line);
+  border-radius: 980px;
+  padding: 6px 14px;
+}
+.diff-row:nth-child(1) .diff-pill { background: #e8f5e9; border-color: #c9e7cb; color: #1d8127; }
+.diff-row:nth-child(2) .diff-pill { background: #e5f0ff; border-color: #c7ddff; color: #0058c7; }
+.diff-row:nth-child(3) .diff-pill { background: #f3e8ff; border-color: #e2ccff; color: #7a3fd1; }
+html[data-theme="dark"] .diff-row:nth-child(1) .diff-pill { background: rgba(48, 209, 88, 0.14); border-color: rgba(48, 209, 88, 0.35); color: #30d158; }
+html[data-theme="dark"] .diff-row:nth-child(2) .diff-pill { background: rgba(10, 132, 255, 0.14); border-color: rgba(10, 132, 255, 0.35); color: #409cff; }
+html[data-theme="dark"] .diff-row:nth-child(3) .diff-pill { background: rgba(191, 90, 242, 0.14); border-color: rgba(191, 90, 242, 0.35); color: #d896ff; }
+.diff-copy h3 { font-size: clamp(24px, 3vw, 34px) !important; line-height: 1.1 !important; margin: 0; }
+.diff-copy p { font-size: 15.5px !important; margin: 0; }
+.diff-stat {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 6px;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--cp-btn-ink) !important;
+  background: var(--cp-btn);
+  border-radius: 980px;
+  padding: 9px 18px;
+}
+.diff-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0; }
+.diff-pair figure {
+  margin: 0;
+  position: relative;
+  border: 1px solid var(--cp-line);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--cp-chip);
+}
+.diff-pair .product-image { aspect-ratio: 4 / 4.4; }
+.diff-pair .product-image img { object-fit: cover !important; }
+.diff-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(10, 10, 11, 0.72);
+  color: #fff;
+  border-radius: 980px;
+  padding: 5px 12px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.diff-tag.after { background: rgba(29, 129, 39, 0.88); }
+.diff-pair figcaption {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--cp-gray);
+  padding: 10px 14px 13px;
+  background: var(--cp-card);
+  border-top: 1px solid var(--cp-line);
+  min-height: 0 !important;
+  display: block !important;
+}
+
+/* ---------- Steps grid: Compresto 2×2 ---------- */
+.steps-section { padding-top: 0 !important; }
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  max-width: none;
+}
+.steps-grid article {
+  background: var(--cp-card);
+  border: 1px solid var(--cp-line);
+  border-radius: 20px;
+  box-shadow: var(--cp-shadow);
+  padding: 24px 22px;
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+}
+.steps-grid article::before { display: none !important; }
+.steps-grid article:hover { transform: translateY(-3px); box-shadow: var(--cp-shadow-lg); }
+.steps-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cp-btn);
+  color: var(--cp-btn-ink);
+  margin-bottom: 26px;
+}
+.steps-index {
+  position: absolute;
+  top: 22px;
+  right: 22px;
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--cp-faint);
+  letter-spacing: 0.08em;
+}
+.steps-grid h3 { font-size: 17px !important; margin: 0 0 8px !important; letter-spacing: -0.02em !important; }
+.steps-grid p { font-size: 14px !important; margin: 0 !important; line-height: 1.6 !important; }
+
+/* ---------- Features: keep bento, Compresto skin ---------- */
+.feature-main,
+.feature-small,
+.feature-small.warm {
+  background: var(--cp-card) !important;
+  border: 1px solid var(--cp-line) !important;
+  box-shadow: var(--cp-shadow) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 24px !important;
+}
+.feature-main::before,
+.feature-small::before { display: none !important; }
+.feature-main:hover,
+.feature-small:hover { transform: translateY(-3px) !important; box-shadow: var(--cp-shadow-lg) !important; }
+.small-icon,
+.small-icon.green,
+.feature-small .small-icon {
+  background: var(--cp-btn) !important;
+  color: var(--cp-btn-ink) !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+.feature-tags span { background: var(--cp-chip) !important; border: 1px solid var(--cp-line) !important; color: var(--cp-ink) !important; }
+.feature-screenshot { border: 1px solid var(--cp-line) !important; box-shadow: none !important; background: var(--cp-card) !important; }
+.format-line { border-top: 1px solid var(--cp-line) !important; color: var(--cp-gray) !important; }
+.format-line span:last-child { color: var(--cp-ink) !important; }
+.text-link { color: var(--cp-ink) !important; font-weight: 600 !important; }
+
+/* ---------- File strip: Compresto logo strip ---------- */
+.strip-section { padding-block: 4px 56px !important; text-align: center; }
+.strip-label { font-size: 11.5px !important; font-weight: 800 !important; letter-spacing: 0.12em !important; color: var(--cp-faint) !important; margin: 0 0 18px !important; }
+.strip-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+.strip-chips li {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--cp-gray);
+  background: var(--cp-card);
+  border: 1px solid var(--cp-line);
+  border-radius: 980px;
+  padding: 10px 20px;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+.strip-chips li:hover { transform: translateY(-2px); color: var(--cp-ink); }
+
+/* ---------- Showcase / theater: Compresto cards ---------- */
+.gallery-section { background: transparent !important; border: 0 !important; }
+.product-cinema {
+  background: var(--cp-card) !important;
+  border: 1px solid var(--cp-line) !important;
+  box-shadow: var(--cp-shadow-lg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 24px !important;
+}
+.cinema-bar {
+  background: var(--cp-chip) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-bottom: 1px solid var(--cp-line) !important;
+  color: var(--cp-gray) !important;
+}
+.cinema-bar .play-control {
+  background: var(--cp-card) !important;
+  border: 1px solid var(--cp-line) !important;
+  color: var(--cp-ink) !important;
+  box-shadow: none !important;
+}
+/* Kill the leftover near-black viewer background from earlier themes */
+.cinema-screen {
+  background: var(--cp-chip) !important;
+  height: min(56vw, 580px) !important;
+}
+.cinema-timeline {
+  background: var(--cp-card) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-top: 1px solid var(--cp-line) !important;
+}
+.cinema-timeline button { color: var(--cp-gray) !important; }
+.cinema-timeline button.active { color: var(--cp-ink) !important; background: var(--cp-chip) !important; box-shadow: none !important; }
+.cinema-timeline i { background: var(--cp-line) !important; }
+.cinema-timeline b { background: var(--cp-ink) !important; }
+.showcase-heading h2 { color: var(--cp-ink) !important; }
+
+.workflow-theater {
+  background: var(--cp-btn) !important;
+  border: 1px solid var(--cp-btn) !important;
+  box-shadow: var(--cp-shadow-lg) !important;
+  border-radius: 24px !important;
+}
+/* Flatten the leftover violet aura so the stage reads clean */
+.document-scene { background: radial-gradient(ellipse at 50% 42%, rgba(120, 120, 128, 0.16), transparent 68%) !important; }
+html[data-theme="dark"] .workflow-theater { background: #17171a !important; border-color: var(--cp-line) !important; }
+.film-frame {
+  background: var(--cp-card) !important;
+  border: 1px solid var(--cp-line) !important;
+  box-shadow: var(--cp-shadow-lg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 24px !important;
+}
+.film-frame figcaption { background: var(--cp-chip) !important; border-top: 1px solid var(--cp-line) !important; color: var(--cp-gray) !important; }
+
+/* ---------- Privacy: light Compresto card, not black band ---------- */
+.privacy-section {
+  background: var(--cp-card) !important;
+  border-top: 1px solid var(--cp-line);
+  border-bottom: 1px solid var(--cp-line);
+  border-radius: 0 !important;
+  margin-inline: 0 !important;
+}
+.privacy-section::before,
+.privacy-section::after { display: none !important; }
+.privacy-copy .eyebrow { color: var(--cp-faint) !important; }
+.privacy-copy h2 { color: var(--cp-ink) !important; font-size: clamp(34px, 4.6vw, 52px) !important; }
+.privacy-copy h2 span {
+  color: var(--cp-ink) !important;
+  background: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+}
+.privacy-copy > p { color: var(--cp-gray) !important; }
+.privacy-signoff {
+  background: var(--cp-chip) !important;
+  border: 1px solid var(--cp-line) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 16px !important;
+  color: var(--cp-ink) !important;
+}
+.privacy-signoff small { color: var(--cp-gray) !important; }
+.privacy-signoff svg, .privacy-facts article > svg { color: var(--cp-ink) !important; }
+.privacy-facts article { border-bottom: 1px solid var(--cp-line) !important; background: transparent !important; }
+.privacy-facts h3 { color: var(--cp-ink) !important; }
+.privacy-facts p, .privacy-facts .privacy-footnote { color: var(--cp-gray) !important; }
+
+/* ---------- Pricing: Compresto pricing card ---------- */
+.price-card {
+  background: var(--cp-card) !important;
+  border: 1px solid var(--cp-line) !important;
+  box-shadow: var(--cp-shadow-lg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 24px !important;
+}
+.price-card::before { display: none !important; }
+.price-card-top .pill { background: var(--cp-chip) !important; border: 1px solid var(--cp-line) !important; color: var(--cp-ink) !important; }
+.price > span { color: var(--cp-ink) !important; }
+.price-secondary { background: var(--cp-chip) !important; border: 1px solid var(--cp-line) !important; }
+.launch-terms { background: var(--cp-chip) !important; border: 1px solid var(--cp-line) !important; }
+.launch-terms p { color: var(--cp-ink) !important; }
+.purchase-pending { background: var(--cp-chip) !important; box-shadow: none !important; color: var(--cp-ink) !important; }
+
+/* ---------- FAQ: centered Compresto accordion ---------- */
+.faq-section { grid-template-columns: 1fr !important; max-width: 780px; }
+.faq-head { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.faq-head h2 { font-size: clamp(32px, 4.6vw, 52px) !important; margin: 0; }
+.faq-head p { margin: 0; font-size: 17px !important; }
+.faq-list { gap: 10px !important; }
+.faq-list details {
+  background: var(--cp-card) !important;
+  border: 1px solid var(--cp-line) !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 16px !important;
+}
+.faq-list details[open] { box-shadow: var(--cp-shadow) !important; }
+summary { color: var(--cp-ink) !important; }
+summary:hover { color: var(--cp-ink) !important; }
+details[open] summary svg { color: var(--cp-ink) !important; }
+
+/* ---------- Final CTA: Compresto banner ---------- */
+.final-cta {
+  background: var(--cp-btn) !important;
+  border: 1px solid var(--cp-btn) !important;
+  box-shadow: var(--cp-shadow-lg) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-radius: 28px !important;
+  text-align: center;
+}
+.final-cta .eyebrow.muted { color: var(--cp-btn-ink) !important; opacity: 0.6; justify-content: center; }
+.final-cta h2 { color: var(--cp-btn-ink) !important; }
+.final-cta p { color: var(--cp-btn-ink) !important; opacity: 0.72; }
+.final-cta .button-primary {
+  background: var(--cp-btn-ink) !important;
+  color: var(--cp-btn) !important;
+  box-shadow: none !important;
+}
+.final-cta .button-primary:hover { filter: brightness(0.94); background: var(--cp-btn-ink) !important; }
+.final-note { color: var(--cp-btn-ink) !important; opacity: 0.6; }
+.final-object .three-fallback { color: var(--cp-btn-ink) !important; opacity: 0.8; }
+
+/* ---------- Footer: Compresto columns ---------- */
+.site-footer { border-top: 1px solid var(--cp-line); padding: 44px 0 0; margin-top: 16px; }
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 32px;
+  padding-bottom: 34px;
+}
+.footer-brand p { font-size: 14px !important; margin-top: 14px !important; }
+.footer-grid nav { display: flex; flex-direction: column; gap: 11px; }
+.footer-grid nav p { margin: 0 0 4px; font-size: 13px; font-weight: 800; letter-spacing: 0.04em; color: var(--cp-ink) !important; }
+.footer-grid nav a { font-size: 14px; color: var(--cp-gray) !important; width: fit-content; }
+.footer-grid nav a:hover { color: var(--cp-ink) !important; text-decoration: underline; text-underline-offset: 3px; }
+.footer-bottom {
+  border-top: 1px solid var(--cp-line) !important;
+  padding: 20px 0 28px !important;
+  color: var(--cp-faint) !important;
+  font-size: 12.5px !important;
+  display: flex;
+  gap: 8px 24px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Motion ---------- */
+@keyframes cp-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+.motion-reveal.is-queued { transform: translateY(20px); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 960px) {
+  .diff-row { grid-template-columns: 1fr; }
+  .diff-row:nth-child(even) .diff-copy { order: 0; }
+  .diff-row:nth-child(even) .diff-pair { order: 0; }
+  .steps-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .shell { width: calc(100% - 32px) !important; }
+  .hero.shell { width: calc(100% - 32px) !important; }
+  .hero h1 { font-size: clamp(38px, 11vw, 52px) !important; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .button { width: 100%; }
+  .social-proof { align-items: flex-start; }
+  .hero-stats { flex-direction: column; }
+  .diff-section { width: calc(100% - 32px); }
+  .diff-pair { grid-template-columns: 1fr; }
+  .diff-pair .product-image { aspect-ratio: 16 / 10; }
+  .steps-grid { grid-template-columns: 1fr; }
+  .steps-icon { margin-bottom: 24px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 26px; }
+  .announce-bar { font-size: 12px; }
+}
+
+/* ---------- Accessibility ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .hero h1, .hero-description, .hero-actions, .hero-caption, .social-proof { animation: none !important; }
+  .steps-grid article:hover, .strip-chips li:hover { transform: none !important; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  .liquid-chip, .diff-tag { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .site-header { background: var(--cp-bg) !important; }
+}
+@media (prefers-contrast: more) {
+  .diff-row, .steps-grid article, .price-card, .faq-list details { border-color: var(--cp-gray); }
+}
