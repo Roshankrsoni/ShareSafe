@@ -26,7 +26,7 @@ test('all internal navigation targets exist and no placeholder links remain',()=
  assert.equal((html.match(/<h1>/g)||[]).length,1);
 });
 test('real screenshot files exist for every gallery state',()=>{
- for(const slide of gallery)for(const width of [960,1600])assert.ok(existsSync(`public/images/product/${slide.image}-${width}.webp`));
+ for(const slide of gallery)for(const theme of ['', '-dark'])for(const width of [960,1600])assert.ok(existsSync(`public/images/product/${slide.image}${theme}-${width}.webp`));
 });
 test('unavailable purchase is disclosed and metadata does not claim a live offer',()=>{
  assert.match(html,/not currently available for purchase/);assert.match(html,/Blur may leave details inferable/);

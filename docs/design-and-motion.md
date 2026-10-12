@@ -25,3 +25,12 @@ The GIF is an actual app walkthrough. The separate animated paper diagram is exp
 ## Performance boundaries
 
 Core application JavaScript is about 81 KB gzip; the optional Three.js scene is about 144 KB gzip in a separate chunk. Vite reports the large uncompressed Three.js chunk as a size warning; it is lazy-loaded and not merged into the initial app chunk. No Lighthouse score or frames-per-second benchmark is claimed. The approximate 30fps value is the explicit rendering cap, not a measured device-performance promise.
+
+## October 12 motion edition
+- Replaced centered oversized hero with two-column editorial composition and a restrained 88px maximum display scale; narrow screens stack naturally.
+- ProductShowcase owns one 4.8-second scene timer, layered 680ms crossfades, manual scene controls, pause/play and progress. Timers stop outside the viewport and while the document is hidden. Reduced motion offers manual next-screen controls.
+- ProductImage renders authentic light/dark captures; prepaint theme CSS selects only the correct variant. No image filters. Offscreen showcase assets become eager on intersection to prepare the next scenes.
+- Native dark captures use the fictional sample, including a genuine successful export. Dark and light GIFs are downloadable.
+- Theme selectors share an external store to preserve hydration and synchronize desktop/mobile controls.
+- IntersectionObserver performs one-time section reveals. Reduced motion exposes all content immediately. No additional motion library or per-frame React updates.
+- Existing pricing and export limitations remain intact. The existing lazy Three.js footer remains separately loaded.
