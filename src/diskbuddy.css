@@ -57,3 +57,14 @@ h3{letter-spacing:0}
 .appearance-control:hover{background:var(--panel);color:var(--fg);border-color:color-mix(in srgb,var(--fg) 18%,var(--border));transform:translateY(-1px)}
 .appearance-control:active{transform:scale(.95)}
 .appearance-control .appearance-icon,.header .appearance-icon{display:grid;place-items:center}
+
+/* Near-view media loading keeps this screenshot stage light without shifting layout. */
+.product-image{position:relative;isolation:isolate;contain:paint}
+.product-image picture{opacity:0;transition:opacity .42s cubic-bezier(.22,1,.36,1)}
+.product-image.is-loaded picture{opacity:1}
+.product-image-placeholder{position:absolute;inset:0;display:block;overflow:hidden;background:linear-gradient(105deg,#29292d 18%,#38383c 38%,#303034 56%,#29292d 76%);background-size:220% 100%;animation:media-shimmer 1.6s ease-in-out infinite}
+.product-image-placeholder:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,#ffffff0b,transparent 65%)}
+@keyframes media-shimmer{to{background-position-x:-220%}}
+.demo-video video{opacity:.72;filter:blur(1.5px);transform:scale(1.004);transition:opacity .38s ease,filter .38s ease,transform .38s ease}
+.demo-video.is-ready video{opacity:1;filter:none;transform:scale(1)}
+@media(prefers-reduced-motion:reduce){.product-image-placeholder{animation:none}.product-image picture,.demo-video video{transition:none}}

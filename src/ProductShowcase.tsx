@@ -2,9 +2,14 @@ import {useEffect,useRef,useState} from 'react';
 import {Pause,Play,ArrowRight} from 'lucide-react';
 import {gallery} from './content';
 
-/** Both real captures are present from first paint; CSS follows the prepaint theme. */
-export function ProductImage({name,alt,hero=false,eager=false,className=''}:{name:string;alt:string;hero?:boolean;eager?:boolean;className?:string}){
- return <span className={`product-image ${className}`}>{(['light','dark'] as const).map(theme=><picture key={theme} className={`capture-${theme}`}><source type="image/webp" srcSet={`/images/product/${name}${theme==='dark'?'-dark':''}-960.webp 960w, /images/product/${name}${theme==='dark'?'-dark':''}-1600.webp 1600w`} sizes="(max-width: 768px) 94vw, 1100px"/><img src={`/images/product/${name}${theme==='dark'?'-dark':''}-1600.webp`} width={name==='13-export-success'?1000:2720} height={name==='13-export-success'?866:1867} alt={alt} loading={hero||eager?'eager':'lazy'} fetchPriority={hero?'high':'auto'} decoding="async"/></picture>)}</span>;
+/** Loads only the selected appearance and can be mounted as a lightweight placeholder until near view. */
+export function ProductImage({name,alt,hero=false,eager=false,className='',theme='system',load=true}:{name:string;alt:string;hero?:boolean;eager?:boolean;className?:string;theme?:'light'|'dark'|'system';load?:boolean}){
+ const [loaded,setLoaded]=useState(false);
+ const themes=theme==='system'?(['light','dark'] as const):([theme] as const);
+ const width=name==='13-export-success'?1000:2720,height=name==='13-export-success'?866:1867;
+ return <span className={`product-image ${className} ${loaded?'is-loaded':''} ${load?'is-loading':''}`} aria-busy={load&&!loaded}>
+  {load?themes.map(mode=><picture key={mode} className={`capture-${mode}`}><source type="image/webp" srcSet={`/images/product/${name}${mode==='dark'?'-dark':''}-960.webp 960w, /images/product/${name}${mode==='dark'?'-dark':''}-1600.webp 1600w`} sizes="(max-width: 768px) 94vw, 1100px"/><img src={`/images/product/${name}${mode==='dark'?'-dark':''}-1600.webp`} width={width} height={height} alt={alt} loading={hero||eager?'eager':'lazy'} fetchPriority={hero?'high':eager?'auto':'low'} decoding="async" onLoad={()=>setLoaded(true)} /></picture>):<span className="product-image-placeholder" aria-hidden="true"/>}
+ </span>;
 }
 export default function ProductShowcase(){
  const [active,setActive]=useState(0),[playing,setPlaying]=useState(true),[visible,setVisible]=useState(false),[reduced,setReduced]=useState(true),[foreground,setForeground]=useState(true);
