@@ -1,5 +1,5 @@
 import {useEffect,useRef,useState} from 'react';
-import {ArrowRight,ArrowUpRight,Check,ChevronDown,Eye,FileCheck2,FileSearch,FileText,Fingerprint,LockKeyhole,Menu,Monitor,ShoppingBag,Mail,Phone,CreditCard,PanelsTopLeft,MousePointer2,Pause,Play,ScanText,Search,ShieldCheck,Undo2,X} from 'lucide-react';
+import {ArrowRight,ArrowUpRight,Check,ChevronDown,Eye,FileCheck2,FileSearch,FileText,Fingerprint,LockKeyhole,Menu,ShoppingBag,Mail,Phone,CreditCard,PanelsTopLeft,MousePointer2,Pause,Play,ScanText,Search,ShieldCheck,Undo2,X} from 'lucide-react';
 import {faqs,gallery} from './content';
 import {pricing,purchaseState} from './config';
 import {AppearanceControl} from './Appearance';

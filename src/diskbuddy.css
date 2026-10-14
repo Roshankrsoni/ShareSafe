@@ -51,3 +51,9 @@ h3{letter-spacing:0}
 .price-card{background:radial-gradient(ellipse at 0 0,#f08a5c20,transparent 70%),radial-gradient(ellipse at 100% 40%,#ed4d7820,transparent 60%),var(--panel)}
 .price-spectrum{background:linear-gradient(90deg,#ffc15c,#ff765b,#f34269,#d72d70)}
 .premium-price>.button{background:linear-gradient(110deg,#ff9a67,#f34e69,#dc3478);color:#fff}
+
+/* Icon-only appearance switch: one click moves directly between light and dark. */
+.appearance-control{display:grid;place-items:center;flex:none;width:36px;height:36px;padding:0;border:1px solid var(--border);border-radius:50%;background:transparent;color:var(--muted);transition:background .18s ease,color .18s ease,border-color .18s ease,transform .18s ease}
+.appearance-control:hover{background:var(--panel);color:var(--fg);border-color:color-mix(in srgb,var(--fg) 18%,var(--border));transform:translateY(-1px)}
+.appearance-control:active{transform:scale(.95)}
+.appearance-control .appearance-icon,.header .appearance-icon{display:grid;place-items:center}
