@@ -15,3 +15,12 @@ h2,h3,.brand,.button{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",
 .apple-icon{width:18px;height:20px;display:block;flex:none}.button .apple-icon{width:18px;height:20px}.header .button.small svg{opacity:.84}.feature-icon{border-radius:15px;box-shadow:inset 0 1px 0 #ffffff20,0 6px 20px var(--glow);background-image:linear-gradient(145deg,#ffffff0a,transparent 72%)}.feature-icon svg{width:23px;height:23px;stroke-width:1.65}.feature h3{letter-spacing:-.35px}.button{letter-spacing:-.12px}.availability-dialog{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Arial,sans-serif}
 @media(max-width:900px){.hero h1{font-size:56px;letter-spacing:-.06em;line-height:1.04}}
 @media(max-width:900px){.hero h1{font-size:48px;letter-spacing:-.055em;line-height:1.06}}
+
+/* A little handwritten warmth, used only for expressive accent copy. */
+@font-face{font-family:"ShareSafe Caveat";src:url("/fonts/caveat-bold.ttf") format("truetype");font-style:normal;font-weight:700;font-display:swap}
+.hero h1 span,.pricing .color-text{font-family:"ShareSafe Caveat",cursive;font-weight:700;letter-spacing:-.025em}
+.hero h1 span{font-size:1.08em;line-height:.94}
+.pricing .color-text{font-size:1.07em;line-height:1.03;letter-spacing:-.035em}
+.review-eyebrow{display:inline-block;width:max-content;max-width:100%;font-family:"ShareSafe Caveat",cursive;font-size:17px;font-weight:700;letter-spacing:.1px;line-height:1.1;background:linear-gradient(100deg,#dcae71,#d38bb1 50%,#95a0e8);background-clip:text;-webkit-background-clip:text;color:transparent}
+@media(max-width:900px){.hero h1 span{font-size:1.04em;line-height:.98}.pricing .color-text{font-size:1.03em}}
+@media(max-width:600px){.hero h1 span{font-size:1.02em;line-height:1}.pricing .color-text{font-size:1em;line-height:1.04}}
