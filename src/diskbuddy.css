@@ -68,3 +68,15 @@ h3{letter-spacing:0}
 .demo-video video{opacity:.72;filter:blur(1.5px);transform:scale(1.004);transition:opacity .38s ease,filter .38s ease,transform .38s ease}
 .demo-video.is-ready video{opacity:1;filter:none;transform:scale(1)}
 @media(prefers-reduced-motion:reduce){.product-image-placeholder{animation:none}.product-image picture,.demo-video video{transition:none}}
+
+/* Reserve the screenshot frame and keep a soft shimmer behind it until decode completes. */
+.product-image-placeholder{z-index:0;background:linear-gradient(105deg,#e9e7e3 18%,#f7f6f3 38%,#eeece8 56%,#e9e7e3 76%);background-size:220% 100%;animation:media-shimmer 1.45s ease-in-out infinite;transition:opacity .3s ease}
+.product-image-placeholder:after{background:radial-gradient(ellipse at 50% 0%,#ffffff66,transparent 68%)}
+.product-image picture{position:relative;z-index:1}
+.product-image.is-loaded .product-image-placeholder{opacity:0;pointer-events:none}
+.app-screen>.product-image{height:100%;background:transparent}
+.app-screen{background:#e9e7e3}
+html[data-theme=dark] .product-image-placeholder{background:linear-gradient(105deg,#252528 18%,#38383c 38%,#2d2d31 56%,#252528 76%);background-size:220% 100%}
+html[data-theme=dark] .product-image-placeholder:after{background:radial-gradient(ellipse at 50% 0%,#ffffff0d,transparent 68%)}
+html[data-theme=dark] .app-screen{background:#252528}
+@media(prefers-reduced-motion:reduce){.product-image-placeholder{animation:none}}

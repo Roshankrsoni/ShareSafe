@@ -8,7 +8,8 @@ export function ProductImage({name,alt,hero=false,eager=false,className='',theme
  const themes=theme==='system'?(['light','dark'] as const):([theme] as const);
  const width=name==='13-export-success'?1000:2720,height=name==='13-export-success'?866:1867;
  return <span className={`product-image ${className} ${loaded?'is-loaded':''} ${load?'is-loading':''}`} aria-busy={load&&!loaded}>
-  {load?themes.map(mode=><picture key={mode} className={`capture-${mode}`}><source type="image/webp" srcSet={`/images/product/${name}${mode==='dark'?'-dark':''}-960.webp 960w, /images/product/${name}${mode==='dark'?'-dark':''}-1600.webp 1600w`} sizes="(max-width: 768px) 94vw, 1100px"/><img src={`/images/product/${name}${mode==='dark'?'-dark':''}-1600.webp`} width={width} height={height} alt={alt} loading={hero||eager?'eager':'lazy'} fetchPriority={hero?'high':eager?'auto':'low'} decoding="async" onLoad={()=>setLoaded(true)} /></picture>):<span className="product-image-placeholder" aria-hidden="true"/>}
+  <span className="product-image-placeholder" aria-hidden="true"/>
+  {load&&themes.map(mode=><picture key={mode} className={`capture-${mode}`}><source type="image/webp" srcSet={`/images/product/${name}${mode==='dark'?'-dark':''}-960.webp 960w, /images/product/${name}${mode==='dark'?'-dark':''}-1600.webp 1600w`} sizes="(max-width: 768px) 94vw, 1100px"/><img src={`/images/product/${name}${mode==='dark'?'-dark':''}-1600.webp`} width={width} height={height} alt={alt} loading={hero||eager?'eager':'lazy'} fetchPriority={hero?'high':eager?'auto':'low'} decoding="async" onLoad={()=>setLoaded(true)} /></picture>)}
  </span>;
 }
 export default function ProductShowcase(){
