@@ -43,3 +43,11 @@ h3{letter-spacing:0}
 .mac-window-status{justify-self:end;display:flex;align-items:center;opacity:.7}
 .macbook .app-screen{border-radius:0 0 6px 6px}
 @media(max-width:600px){.mac-window-toolbar{height:15px;padding:0 5px;font-size:5px}.mac-traffic-lights{gap:3px}.mac-traffic-lights i{width:5px;height:5px}.mac-window-status svg{width:7px;height:7px}}
+
+/* Keep every brand and accent gradient in a warm red, coral and pink family. */
+.hero h1 span,.pricing .color-text{background-image:linear-gradient(108deg,#ff704d 0%,#ff3f62 36%,#ed2f86 72%,#c92d72 100%)}
+.review-eyebrow{background-image:linear-gradient(100deg,#ff8b45,#f34269 52%,#d72d70)}
+.demo-review .review-orb{background:linear-gradient(140deg,#ff765b2b,#ed2f8614);border-color:#f05a6a50}
+.price-card{background:radial-gradient(ellipse at 0 0,#f08a5c20,transparent 70%),radial-gradient(ellipse at 100% 40%,#ed4d7820,transparent 60%),var(--panel)}
+.price-spectrum{background:linear-gradient(90deg,#ffc15c,#ff765b,#f34269,#d72d70)}
+.premium-price>.button{background:linear-gradient(110deg,#ff9a67,#f34e69,#dc3478);color:#fff}
