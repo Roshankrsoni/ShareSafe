@@ -1,4 +1,4 @@
-type MarketingEvent = 'pricing_click' | 'purchase_click' | 'demo_view' | 'faq_open' | 'navigation';
+type MarketingEvent = 'pricing_click' | 'purchase_click' | 'demo_view' | 'faq_open' | 'navigation' | 'guide_view' | 'guide_dismiss' | 'guide_cta';
 type EventDetails = { location?: string; item?: string };
 // No tracker, network request, document content, or personal data by default.
 // An approved integration can subscribe to this event later.

@@ -1,1 +1,40 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000"><defs><linearGradient id="sky" x2="1" y2="1"><stop stop-color="#537ec6"/><stop offset=".55" stop-color="#bdadf1"/><stop offset="1" stop-color="#293f77"/></linearGradient><linearGradient id="sun" x2=".6" y2="1"><stop stop-color="#ffdda9"/><stop offset=".55" stop-color="#e79174"/><stop offset="1" stop-color="#b24f87"/></linearGradient><linearGradient id="sea" x2="1" y2=".2"><stop stop-color="#122e68"/><stop offset=".55" stop-color="#477dcc"/><stop offset="1" stop-color="#a1d1e7"/></linearGradient><linearGradient id="violet" x2="1" y2="1"><stop stop-color="#ca89c5"/><stop offset="1" stop-color="#493b86"/></linearGradient></defs><rect width="1600" height="1000" fill="url(#sky)"/><path d="M-100 720C300 340 650 340 840 140S1310-170 1700 80V650C1230 420 880 580 630 740S180 1010-100 930Z" fill="url(#sun)"/><path d="M-100 1030V700C280 740 410 420 760 450S1320 960 1700 630V1030Z" fill="url(#sea)"/><path d="M-50 1000V870C380 760 660 620 880 700S1280 1040 1650 800V1050Z" fill="url(#violet)"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <defs>
+    <linearGradient id="base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1014"/>
+      <stop offset=".5" stop-color="#101a20"/>
+      <stop offset="1" stop-color="#090e12"/>
+    </linearGradient>
+    <radialGradient id="emerald" cx=".18" cy=".12" r=".78">
+      <stop offset="0" stop-color="#1f6b4d" stop-opacity=".55"/>
+      <stop offset=".55" stop-color="#16493a" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#0a0f13" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="crimson" cx=".9" cy=".94" r=".72">
+      <stop offset="0" stop-color="#7a1226" stop-opacity=".4"/>
+      <stop offset=".6" stop-color="#4a0f1c" stop-opacity=".14"/>
+      <stop offset="1" stop-color="#0a0f13" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="streak" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset=".5" stop-color="#cfe8dc" stop-opacity=".055"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="vignette" cx=".5" cy=".48" r=".78">
+      <stop offset=".5" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity=".5"/>
+    </radialGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#base)"/>
+  <rect width="1600" height="1000" fill="url(#emerald)"/>
+  <rect width="1600" height="1000" fill="url(#crimson)"/>
+  <path d="M-260 940 L660 -140 L980 -140 L60 1060 Z" fill="url(#streak)"/>
+  <g fill="none" stroke="#dff0e8" stroke-opacity=".05" stroke-width="1.5">
+    <circle cx="1372" cy="128" r="210"/>
+    <circle cx="1372" cy="128" r="322"/>
+    <circle cx="1372" cy="128" r="436"/>
+    <circle cx="232" cy="900" r="250"/>
+    <circle cx="232" cy="900" r="366"/>
+  </g>
+  <rect width="1600" height="1000" fill="url(#vignette)"/>
+</svg>

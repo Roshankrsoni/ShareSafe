@@ -12,7 +12,7 @@ function applyAppearance(preference:Appearance) {
  document.documentElement.dataset.themePreference=preference;
  window.dispatchEvent(new CustomEvent('sharesafe-appearance',{detail:preference}));
  document.documentElement.style.colorScheme=dark?'dark':'light';
- document.querySelector('meta[name="theme-color"]')?.setAttribute('content',dark?'#080a0d':'#fafbfc');
+ document.querySelector('meta[name="theme-color"]')?.setAttribute('content',dark?'#0f0f10':'#fafaf9');
 }
 function subscribeAppearance(notify:()=>void){window.addEventListener('sharesafe-appearance',notify);return()=>window.removeEventListener('sharesafe-appearance',notify);}
 export function AppearanceControl(){
