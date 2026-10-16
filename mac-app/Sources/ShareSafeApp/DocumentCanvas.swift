@@ -76,6 +76,7 @@ struct DocumentCanvas: View {
 }
 
 struct ImagePage: View {
+    private enum ResizeCorner { case topLeft, topRight, bottomLeft, bottomRight }
     let page: DocumentPage
     let findings: [Finding]
     let masks: [ManualMask]
@@ -94,6 +95,11 @@ struct ImagePage: View {
     @State private var movingMaskID: UUID?
     @State private var movingMaskStart: CGRect?
     @State private var moveTranslation = CGSize.zero
+    @State private var hoveredMaskID: UUID?
+    @State private var resizingMaskID: UUID?
+    @State private var resizingMaskStart: CGRect?
+    @State private var resizingCorner: ResizeCorner?
+    @State private var resizeTranslation = CGSize.zero
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .topLeading) {
@@ -132,14 +138,30 @@ struct ImagePage: View {
     @ViewBuilder private func manualLayer(size: CGSize) -> some View {
         if protectedPreview {
             ForEach(masks) { mask in
-                let normalizedRect = mask.id == movingMaskID ? translatedMaskRect(mask.rect, by: moveTranslation, size: size) : mask.rect
+                let normalizedRect = previewRect(for: mask, size: size)
                 let frame = displayRect(normalizedRect, size: size)
-                MaskTile(source: sourceImage, rect: mask.rect, appearance: appearance, shape: mask.shape).frame(width: frame.width, height: frame.height)
-                    .clipShape(drawingShapeView(mask.shape))
-                    .overlay(drawingShapeView(mask.shape).stroke(mask.id == movingMaskID ? Style.accent : .black.opacity(0.08), lineWidth: mask.id == movingMaskID ? 2 : 0.5))
-                    .offset(x: frame.minX, y: frame.minY).accessibilityLabel("Manual \(mask.shape.rawValue.lowercased()) redaction")
+                MaskTile(source: sourceImage, rect: mask.rect, appearance: appearance, shape: mask.shape)
+                .clipShape(drawingShapeView(mask.shape))
+                .overlay(drawingShapeView(mask.shape).stroke(activeMaskID == mask.id ? Style.accent : .black.opacity(0.08), lineWidth: activeMaskID == mask.id ? 2 : 0.5))
+                .overlay(alignment: .topLeading) { if hoveredMaskID == mask.id { resizeHandle(.topLeft, mask: mask, size: size).offset(x: 4.5, y: 4.5) } }
+                .overlay(alignment: .topTrailing) { if hoveredMaskID == mask.id { resizeHandle(.topRight, mask: mask, size: size).offset(x: -4.5, y: 4.5) } }
+                .overlay(alignment: .bottomLeading) { if hoveredMaskID == mask.id { resizeHandle(.bottomLeft, mask: mask, size: size).offset(x: 4.5, y: -4.5) } }
+                .overlay(alignment: .bottomTrailing) { if hoveredMaskID == mask.id { resizeHandle(.bottomRight, mask: mask, size: size).offset(x: -4.5, y: -4.5) } }
+                .frame(width: frame.width, height: frame.height)
+                .contentShape(drawingShapeView(mask.shape))
+                .offset(x: frame.minX, y: frame.minY)
+                .onHover { hoveredMaskID = $0 ? mask.id : (hoveredMaskID == mask.id ? nil : hoveredMaskID) }
+                .accessibilityLabel("Manual \(mask.shape.rawValue.lowercased()) redaction")
             }
         }
+    }
+    private var activeMaskID: UUID? { resizingMaskID ?? movingMaskID }
+    private func previewRect(for mask: ManualMask, size: CGSize) -> CGRect {
+        if resizingMaskID == mask.id, let corner = resizingCorner, let start = resizingMaskStart {
+            return resizedMaskRect(start, corner: corner, by: resizeTranslation, size: size)
+        }
+        if movingMaskID == mask.id { return translatedMaskRect(mask.rect, by: moveTranslation, size: size) }
+        return mask.rect
     }
     @ViewBuilder private var dragPreview: some View {
         if let start, let current {
@@ -178,6 +200,32 @@ struct ImagePage: View {
             }
         ).help("Drag a manual mask to move it")
     }
+    private func resizeHandle(_ corner: ResizeCorner, mask: ManualMask, size: CGSize) -> some View {
+        Circle().fill(.white).frame(width: 9, height: 9)
+            .overlay(Circle().stroke(Style.accent, lineWidth: 1.5))
+            .contentShape(Rectangle().inset(by: -5))
+            .gesture(
+                DragGesture(minimumDistance: 1).onChanged { value in
+                    if resizingMaskID == nil {
+                        resizingMaskID = mask.id
+                        resizingMaskStart = mask.rect
+                        resizingCorner = corner
+                    }
+                    resizeTranslation = value.translation
+                }.onEnded { value in
+                    if let start = resizingMaskStart {
+                        onMoveMask(mask.id, resizedMaskRect(start, corner: corner, by: value.translation, size: size))
+                    }
+                    resizingMaskID = nil; resizingMaskStart = nil; resizingCorner = nil; resizeTranslation = .zero
+                }
+            )
+            .onHover { hovering in
+                if hovering, let image = NSImage(systemSymbolName: "arrow.up.left.and.arrow.down.right", accessibilityDescription: "Resize") {
+                    NSCursor(image: image, hotSpot: NSPoint(x: image.size.width / 2, y: image.size.height / 2)).push()
+                } else if !hovering { NSCursor.pop() }
+            }
+            .help("Drag to resize")
+    }
     private func mask(at point: CGPoint, size: CGSize) -> ManualMask? {
         let normalized = CGPoint(x: point.x / max(size.width, 1), y: 1 - point.y / max(size.height, 1))
         return masks.reversed().first { mask in
@@ -196,6 +244,18 @@ struct ImagePage: View {
         let x = min(max(rect.minX + translation.width / width, 0), 1 - rect.width)
         let y = min(max(rect.minY - translation.height / height, 0), 1 - rect.height)
         return CGRect(x: x, y: y, width: rect.width, height: rect.height)
+    }
+    private func resizedMaskRect(_ rect: CGRect, corner: ResizeCorner, by translation: CGSize, size: CGSize) -> CGRect {
+        let dx = translation.width / max(size.width, 1)
+        let dy = -translation.height / max(size.height, 1)
+        var minX = rect.minX, maxX = rect.maxX, minY = rect.minY, maxY = rect.maxY
+        switch corner {
+        case .topLeft: minX = min(max(rect.minX + dx, 0), rect.maxX - 0.006); maxY = min(max(rect.maxY + dy, rect.minY + 0.006), 1)
+        case .topRight: maxX = min(max(rect.maxX + dx, rect.minX + 0.006), 1); maxY = min(max(rect.maxY + dy, rect.minY + 0.006), 1)
+        case .bottomLeft: minX = min(max(rect.minX + dx, 0), rect.maxX - 0.006); minY = min(max(rect.minY + dy, 0), rect.maxY - 0.006)
+        case .bottomRight: maxX = min(max(rect.maxX + dx, rect.minX + 0.006), 1); minY = min(max(rect.minY + dy, 0), rect.maxY - 0.006)
+        }
+        return CGRect(x: minX, y: minY, width: maxX - minX, height: maxY - minY)
     }
     private func displayRect(_ normalized: CGRect, size: CGSize) -> CGRect {
         let padded = SafeExporter.pixelRect(normalized, width: page.pixelWidth, height: page.pixelHeight)
