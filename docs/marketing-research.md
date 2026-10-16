@@ -26,7 +26,7 @@ Regulated legal/medical teams and high-volume batch workflows are not the launch
 
 Hero copy creates a recognizable everyday moment, followed immediately by the real workspace. Feature blocks explain Find / Refine / Export; a four-state screenshot gallery demonstrates decisions and a successful receipt. Privacy copy explicitly separates detection, human review, solid masks, blur and rebuilding the output. FAQ handles scans, file limits, output tradeoffs and purchase readiness.
 
-The one-time $2 first-10 / $5 subsequent-purchase model comes from the owner, not competitor research. With no supplied checkout, CTAs point to pricing and clearly disclose purchasing is not open. No fake timer, remaining count, testimonial, rating or live availability signal is used.
+The current Dodo product is configured for a $2 one-time purchase and linked from the pricing CTA. The proposed first-10/$5 subsequent-purchase change is not automatically enforced by this static checkout. No fake timer or remaining-count claim is shown.
 
 ## Search intent
 

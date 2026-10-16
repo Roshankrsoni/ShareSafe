@@ -1,6 +1,6 @@
 export type OfferStatus = 'unverified' | 'launch' | 'regular';
 export type Pricing = { currency: 'USD'; launchPrice: number; regularPrice: number; launchCap: number; offerStatus: OfferStatus; checkoutUrl: string | null };
-export const pricing: Pricing = { currency: 'USD', launchPrice: 2, regularPrice: 5, launchCap: 10, offerStatus: 'unverified', checkoutUrl: null };
+export const pricing: Pricing = { currency: 'USD', launchPrice: 2, regularPrice: 5, launchCap: 10, offerStatus: 'launch', checkoutUrl: 'https://dodo.pe/sharesafe-buy' };
 export function purchaseState(config: Pricing) {
   const validDestination = config.checkoutUrl && /^https:\/\/[^\s]+$/.test(config.checkoutUrl);
   const available = !!validDestination && config.offerStatus !== 'unverified';

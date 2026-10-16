@@ -28,7 +28,7 @@ The page's compact animated example makes the utility understandable before the 
 
 The prior long pinned tour and repeated marketing panels have been replaced by a shorter reading sequence. The existing narrated product video is preserved as a dedicated workflow chapter. Its playback remains muted by default, with explicit sound and pause controls, and pauses outside the viewport. The new illustrative animation also includes pause/replay controls and starts paused when reduced motion is requested.
 
-The original ShareSafe product name and red shield are retained. Download availability, testimonials, scarcity counters, cross-platform support and licence promises from the reference are not transferable product facts, so the page uses verified ShareSafe facts instead. No fake “notify me” form or working checkout is implied.
+The original ShareSafe product name and red shield are retained. Download availability, testimonials, scarcity counters and cross-platform support from the reference are not transferable product facts. The pricing CTA links to Dodo's hosted checkout; app delivery and licence fulfillment remain unconfigured.
 
 ## Assets and performance
 

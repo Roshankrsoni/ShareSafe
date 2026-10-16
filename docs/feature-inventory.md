@@ -27,8 +27,8 @@ Audit: October 11, 2026. Source paths below are relative to the native `ShareSaf
 | Local workflow | Implemented | macOS frameworks; sandbox with selected-file access, no network entitlement, no app analytics/upload service found. Later sharing, swap and backups outside scope. | `Resources/ShareSafe.entitlements`; app/core source audit |
 | Indian-language OCR expansion | Planned | Current OS-supported language list only; further models/benchmarking not shipped. | `docs/FEATURE-RESEARCH-AND-PLAN.md` |
 | Batch / reusable privacy policies | Planned | Not marketed as available. | `docs/FEATURE-RESEARCH-AND-PLAN.md` |
-| Checkout / first-10 enforcement | Unverified / absent | No actual payment backend or successful-purchase count found. Website never simulates them. | repository audit; website `src/config.ts` |
-| Public signed/notarized distribution, licence terms | Unverified / not launch-ready | Local ad-hoc app build exists; no verified public checkout/download/licence service. | `scripts/`; `dist/`; `README.md` |
+| Checkout / first-10 enforcement | Dodo hosted checkout linked; first-10 price change not enforced | Product is configured for $2 USD one-time; static checkout has no successful-purchase counter or automatic price change. | Dodo product `pdt_0NnhU4WmYU9pKWXnIILA7`; website `src/config.ts` |
+| Public signed/notarized distribution, licence terms | Not launch-ready | Dodo digital-file delivery and licence fulfillment are not configured; public app delivery is not verified. | `scripts/`; `README.md`; `docs/launch-readiness.md` |
 
 ## Claim boundaries
 

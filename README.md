@@ -26,9 +26,9 @@ Quality checks: `npm run lint`, `npm run typecheck`, `npm test`, `npm audit`.
 
 ## Pricing integration
 
-The current config intentionally has `offerStatus: 'unverified'` and `checkoutUrl: null`. All pricing CTAs lead to a real pricing section. There is no pretend purchase, payment form, download, customer counter or licence.
+All environments link to Dodo Payments' live hosted checkout at `https://dodo.pe/sharesafe-buy` for product `pdt_0NnhU4WmYU9pKWXnIILA7`. The header Buy button, pricing CTA, and both Download CTAs use this URL. No API credentials are stored in this static site.
 
-Do not simply flip `offerStatus` to launch and assume the cap is enforced. Connect a real server-side checkout first. See the launch-readiness document. No API secrets belong in frontend config. After connecting an authoritative offer, the same CTA component can display $2 or $5; unit tests cover both states and invalid destinations.
+The static checkout does not implement the proposed first-10/$5-afterward price change. ShareSafe's app download and licence delivery are also not configured in Dodo yet. See the launch-readiness document before treating the site as a complete sales channel.
 
 ## Deployment
 

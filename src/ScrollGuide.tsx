@@ -1,6 +1,7 @@
 import {useEffect,useState} from 'react';
 import {ArrowRight,MessageCircle,X} from 'lucide-react';
 import {track} from './analytics';
+import {pricing,purchaseState} from './config';
 
 type GuideStep = {id:string;eyebrow:string;title:string;text:string;cta?:{label:string;href:string}};
 
@@ -11,7 +12,7 @@ const STEPS: GuideStep[] = [
   {id:'problem',eyebrow:'Why it matters',title:'Briefs carry more than you meant.',text:'These are actual review + receipt panels. Every suggestion needs your call: Redact or Keep.'},
   {id:'specs',eyebrow:'Good to know',title:'Native tools, practical limits.',text:'macOS 14+, 40 pages / 25 MB max. OCR depends on scan quality. Image-only export, no searchable text.'},
   {id:'privacy',eyebrow:'Privacy check',title:'Everything runs on your Mac.',text:'No document uploads, no app account. You control sharing, backups, and the final inspect-before-send.'},
-  {id:'pricing',eyebrow:'Launch offer',title:'$2 once for the first 10 — then $5.',text:'Checkout isn’t open yet. Preview the offer and get notified so you don’t miss it.',cta:{label:'View launch pricing',href:'#pricing'}},
+  {id:'pricing',eyebrow:'One-time purchase',title:'ShareSafe for $2.',text:'Checkout is available through Dodo Payments. App download delivery details are still being finalized.',cta:{label:purchaseState(pricing).label,href:purchaseState(pricing).href}},
   {id:'faq',eyebrow:'Before you share',title:'Plain answers, incl. tradeoffs.',text:'Detection can miss or over-flag. Export checks don’t certify completeness — always inspect the copy.'},
 ];
 
