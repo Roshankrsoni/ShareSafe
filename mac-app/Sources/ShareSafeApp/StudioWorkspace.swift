@@ -45,10 +45,10 @@ struct StudioSidebar: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 7) {
             Button { model.openPanel() } label: { Label("Open document", systemImage: "folder").font(.system(size: 13, weight: .semibold)).frame(maxWidth: .infinity).padding(.vertical, 12) }.buttonStyle(.plain).foregroundStyle(.white).background(Style.accent, in: RoundedRectangle(cornerRadius: 13)).disabled(model.busy).padding(.bottom, 9)
-            nav("Home", "house.fill") { model.section = "Home"; model.showReviewPane = false }
-            nav("Review", "eye") { model.section = "Review"; model.showReviewPane = true; model.drawingMask = false }
-            nav("Redact", "pencil.tip.crop.circle") { model.section = "Redact"; model.showReviewPane = true }
-            nav("Insights", "chart.bar") { model.section = "Insights"; model.showReviewPane = true }
+            nav("Home", "house.fill") { model.finishCanvasTool(); model.section = "Home"; model.showReviewPane = false }
+            nav("Review", "eye") { model.finishCanvasTool(); model.section = "Review"; model.showReviewPane = true }
+            nav("Redact", "pencil.tip.crop.circle") { model.finishCanvasTool(); model.section = "Redact"; model.showReviewPane = true }
+            nav("Insights", "chart.bar") { model.finishCanvasTool(); model.section = "Insights"; model.showReviewPane = true }
             nav("Export", "square.and.arrow.up") { model.requestExport() }.disabled(model.document == nil || model.busy)
             Divider().padding(.vertical, 14)
             Text("Session files").font(.system(size: 12, weight: .medium)).padding(.horizontal, 8).padding(.bottom, 7)
@@ -119,7 +119,9 @@ struct StudioToolbar: View {
                 Spacer(minLength: 0)
                 Button { model.undo() } label: { Image(systemName: "arrow.uturn.backward") }.disabled(!model.canUndo).help("Undo")
                 Button { model.redo() } label: { Image(systemName: "arrow.uturn.forward") }.disabled(!model.canRedo).help("Redo")
-                Button { model.drawingMask.toggle(); model.protectedPreview = true } label: { Image(systemName: model.manualMaskShape == .round ? "circle.dashed" : "rectangle.dashed").foregroundStyle(model.drawingMask ? Style.accent : .primary) }.disabled(model.document?.kind == .text).help(model.manualMaskShape == .round ? "Draw a round mask" : "Draw a rectangular mask")
+                Button { model.setMaskTool(.rectangle) } label: { Image(systemName: "rectangle.dashed").foregroundStyle(model.drawingMask && model.manualMaskShape == .rectangle ? Style.accent : .primary) }.disabled(model.document?.kind == .text).help("Draw a rectangular mask").accessibilityLabel("Rectangle selection")
+                Button { model.setMaskTool(.round) } label: { Image(systemName: "circle.dashed").foregroundStyle(model.drawingMask && model.manualMaskShape == .round ? Style.accent : .primary) }.disabled(model.document?.kind == .text).help("Draw a round mask").accessibilityLabel("Circle selection")
+                Button { model.setMoveTool() } label: { Image(systemName: "hand.draw").foregroundStyle(model.movingMask ? Style.accent : .primary) }.disabled(model.document?.kind == .text).help("Move a manual mask").accessibilityLabel("Move selection")
                 Button { showStyle = true } label: { Image(systemName: "paintpalette") }.disabled(model.document?.kind == .text).help("Mask style").popover(isPresented: $showStyle) { MaskOptions().environmentObject(model) }
             }
             HStack {
@@ -226,8 +228,11 @@ struct StudioInspector: View {
                 Button("Find exact matches") { model.addTerm(); model.section = "Review" }.buttonStyle(.borderedProminent).disabled(model.customTerm.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 if model.document?.kind != .text {
                     Divider()
-                    Button { model.drawingMask.toggle(); model.protectedPreview = true } label: { Label(model.drawingMask ? "Finish drawing" : "Draw a manual mask", systemImage: "rectangle.dashed") }.buttonStyle(.bordered)
-                    MaskShapePicker(selection: $model.manualMaskShape)
+                    HStack(spacing: 12) {
+                        Button { model.setMaskTool(.rectangle) } label: { Image(systemName: "rectangle.dashed") }.help("Rectangle selection")
+                        Button { model.setMaskTool(.round) } label: { Image(systemName: "circle.dashed") }.help("Circle selection")
+                        Button { model.setMoveTool() } label: { Image(systemName: "hand.draw") }.help("Move a manual mask")
+                    }.buttonStyle(.bordered)
                     Text("Cover photos, QR codes, handwriting or details that weren’t detected.").font(.caption).foregroundStyle(.secondary)
                     MaskOptions().padding(.horizontal, -16)
                 }

@@ -103,12 +103,12 @@ struct OfficeRibbon: View {
         }.labelsHidden().disabled(!hasDocument)
     }
     @ViewBuilder private var protectTools: some View {
-        ribbonButton("Draw mask", "rectangle.dashed", selected: model.drawingMask) { model.drawingMask.toggle(); model.protectedPreview = true }
+        ribbonButton("Rectangle", "rectangle.dashed", selected: model.drawingMask && model.manualMaskShape == .rectangle) { model.setMaskTool(.rectangle) }
             .disabled(!hasDocument || model.document?.kind == .text)
-        if model.document?.kind != .text {
-            MaskShapePicker(selection: $model.manualMaskShape).frame(width: 130)
-                .disabled(!hasDocument)
-        }
+        ribbonButton("Circle", "circle.dashed", selected: model.drawingMask && model.manualMaskShape == .round) { model.setMaskTool(.round) }
+            .disabled(!hasDocument || model.document?.kind == .text)
+        ribbonButton("Move", "hand.draw", selected: model.movingMask) { model.setMoveTool() }
+            .disabled(!hasDocument || model.document?.kind == .text)
         ribbonButton("Mask style", "paintpalette") { showStyle.toggle() }
             .disabled(!hasDocument || model.document?.kind == .text)
             .popover(isPresented: $showStyle) { MaskOptions().environmentObject(model) }

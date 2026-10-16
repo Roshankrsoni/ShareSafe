@@ -6,13 +6,12 @@ struct DocumentCanvas: View {
     @EnvironmentObject var model: Workspace
     var body: some View {
         VStack(spacing: 0) {
-            if model.drawingMask {
+            if model.drawingMask || model.movingMask {
                 HStack {
-                    Image(systemName: "cursorarrow.rays")
-                    Text("Drag over a detail to cover it.")
-                    MaskShapePicker(selection: $model.manualMaskShape)
+                    Image(systemName: model.movingMask ? "hand.draw" : "cursorarrow.rays")
+                    Text(model.movingMask ? "Drag a manual mask to reposition it." : "Drag over a detail to cover it.")
                     Spacer()
-                    Button("Done") { model.drawingMask = false }
+                    Button("Done") { model.finishCanvasTool() }
                 }.font(.caption).padding(12).background(Style.accent.opacity(0.09))
             }
             GeometryReader { geometry in
@@ -28,7 +27,7 @@ struct DocumentCanvas: View {
                             Group {
                                 if doc.kind == .text { textPage(page, doc: doc, scale: pageWidth(page, geometry: geometry.size) / 612) }
                                 else {
-                                    ImagePage(page: page, findings: model.pageFindings, masks: doc.masks.filter { $0.pageIndex == model.pageIndex }, appearance: doc.maskAppearance, protectedPreview: model.protectedPreview, drawing: model.drawingMask, drawingShape: model.manualMaskShape, selected: model.selectedFinding, onMask: { model.addMask($0) })
+                                    ImagePage(page: page, findings: model.pageFindings, masks: doc.masks.filter { $0.pageIndex == model.pageIndex }, appearance: doc.maskAppearance, protectedPreview: model.protectedPreview, drawing: model.drawingMask, moving: model.movingMask, drawingShape: model.manualMaskShape, selected: model.selectedFinding, onMask: { model.addMask($0) }, onMoveMask: { id, rect in model.moveMask(id, to: rect) })
                                         .id("\(doc.id)-\(page.index)")
                                 }
                             }
@@ -83,13 +82,18 @@ struct ImagePage: View {
     let appearance: MaskAppearance
     let protectedPreview: Bool
     let drawing: Bool
+    let moving: Bool
     let drawingShape: ManualMaskShape
     let selected: UUID?
     let onMask: (CGRect) -> Void
+    let onMoveMask: (UUID, CGRect) -> Void
     @State private var image: NSImage?
     @State private var sourceImage: CGImage?
     @State private var start: CGPoint?
     @State private var current: CGPoint?
+    @State private var movingMaskID: UUID?
+    @State private var movingMaskStart: CGRect?
+    @State private var moveTranslation = CGSize.zero
     var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .topLeading) {
@@ -101,6 +105,7 @@ struct ImagePage: View {
                 manualLayer(size: proxy.size)
                 dragPreview
                 if drawing { drawingLayer(size: proxy.size) }
+                if moving { moveLayer(size: proxy.size) }
             }.clipped()
         }
         .aspectRatio(CGFloat(page.pixelWidth) / CGFloat(max(1, page.pixelHeight)), contentMode: .fit)
@@ -127,10 +132,11 @@ struct ImagePage: View {
     @ViewBuilder private func manualLayer(size: CGSize) -> some View {
         if protectedPreview {
             ForEach(masks) { mask in
-                let frame = displayRect(mask.rect, size: size)
+                let normalizedRect = mask.id == movingMaskID ? translatedMaskRect(mask.rect, by: moveTranslation, size: size) : mask.rect
+                let frame = displayRect(normalizedRect, size: size)
                 MaskTile(source: sourceImage, rect: mask.rect, appearance: appearance, shape: mask.shape).frame(width: frame.width, height: frame.height)
                     .clipShape(drawingShapeView(mask.shape))
-                    .overlay(drawingShapeView(mask.shape).stroke(.black.opacity(0.08), lineWidth: 0.5))
+                    .overlay(drawingShapeView(mask.shape).stroke(mask.id == movingMaskID ? Style.accent : .black.opacity(0.08), lineWidth: mask.id == movingMaskID ? 2 : 0.5))
                     .offset(x: frame.minX, y: frame.minY).accessibilityLabel("Manual \(mask.shape.rawValue.lowercased()) redaction")
             }
         }
@@ -155,6 +161,42 @@ struct ImagePage: View {
             }
         )
     }
+    private func moveLayer(size: CGSize) -> some View {
+        Color.clear.contentShape(Rectangle()).gesture(
+            DragGesture(minimumDistance: 2).onChanged { value in
+                if movingMaskID == nil {
+                    guard let mask = mask(at: value.startLocation, size: size) else { return }
+                    movingMaskID = mask.id
+                    movingMaskStart = mask.rect
+                }
+                moveTranslation = value.translation
+            }.onEnded { value in
+                if let id = movingMaskID, let start = movingMaskStart {
+                    onMoveMask(id, translatedMaskRect(start, by: value.translation, size: size))
+                }
+                movingMaskID = nil; movingMaskStart = nil; moveTranslation = .zero
+            }
+        ).help("Drag a manual mask to move it")
+    }
+    private func mask(at point: CGPoint, size: CGSize) -> ManualMask? {
+        let normalized = CGPoint(x: point.x / max(size.width, 1), y: 1 - point.y / max(size.height, 1))
+        return masks.reversed().first { mask in
+            let r = mask.rect
+            guard r.width > 0, r.height > 0 else { return false }
+            if mask.shape == .round {
+                let dx = (normalized.x - r.midX) / (r.width / 2)
+                let dy = (normalized.y - r.midY) / (r.height / 2)
+                return dx * dx + dy * dy <= 1
+            }
+            return r.contains(normalized)
+        }
+    }
+    private func translatedMaskRect(_ rect: CGRect, by translation: CGSize, size: CGSize) -> CGRect {
+        let width = max(size.width, 1), height = max(size.height, 1)
+        let x = min(max(rect.minX + translation.width / width, 0), 1 - rect.width)
+        let y = min(max(rect.minY - translation.height / height, 0), 1 - rect.height)
+        return CGRect(x: x, y: y, width: rect.width, height: rect.height)
+    }
     private func displayRect(_ normalized: CGRect, size: CGSize) -> CGRect {
         let padded = SafeExporter.pixelRect(normalized, width: page.pixelWidth, height: page.pixelHeight)
         return CGRect(x: padded.minX / Double(page.pixelWidth) * size.width, y: (1 - padded.maxY / Double(page.pixelHeight)) * size.height, width: padded.width / Double(page.pixelWidth) * size.width, height: padded.height / Double(page.pixelHeight) * size.height)
@@ -163,17 +205,6 @@ struct ImagePage: View {
     private func dragRect(_ a: CGPoint, _ b: CGPoint) -> CGRect { CGRect(x: min(a.x, b.x), y: min(a.y, b.y), width: abs(a.x - b.x), height: abs(a.y - b.y)) }
     private func drawingShapeView(_ shape: ManualMaskShape) -> AnyShape {
         shape == .round ? AnyShape(Ellipse()) : AnyShape(Rectangle())
-    }
-}
-
-struct MaskShapePicker: View {
-    @Binding var selection: ManualMaskShape
-    var body: some View {
-        Picker("Mask shape", selection: $selection) {
-            Label("Rectangle", systemImage: "rectangle").tag(ManualMaskShape.rectangle)
-            Label("Round", systemImage: "circle").tag(ManualMaskShape.round)
-        }.pickerStyle(.segmented).labelsHidden().frame(width: 150)
-            .accessibilityLabel("Manual mask shape")
     }
 }
 

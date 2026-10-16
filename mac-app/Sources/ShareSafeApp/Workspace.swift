@@ -11,6 +11,7 @@ final class Workspace: ObservableObject {
     @Published var selectedFinding: UUID?
     @Published var protectedPreview = true
     @Published var drawingMask = false
+    @Published var movingMask = false
     @Published var manualMaskShape: ManualMaskShape = .rectangle
     @Published var busy = false
     @Published var progress = ""
@@ -65,7 +66,17 @@ final class Workspace: ObservableObject {
     var page: DocumentPage? { document.flatMap { $0.pages.indices.contains(pageIndex) ? $0.pages[pageIndex] : nil } }
     var pageFindings: [Finding] { document?.findings.filter { $0.pageIndex == pageIndex } ?? [] }
 
-    func select(_ id: UUID) { selectedID = id; pageIndex = 0; selectedFinding = nil; drawingMask = false; notice = nil }
+    func select(_ id: UUID) {
+        selectedID = id; pageIndex = 0; selectedFinding = nil
+        drawingMask = false; movingMask = false
+        section = "Review"; showReviewPane = true
+        notice = nil
+    }
+    func setMaskTool(_ shape: ManualMaskShape) {
+        manualMaskShape = shape; drawingMask = true; movingMask = false; protectedPreview = true
+    }
+    func setMoveTool() { drawingMask = false; movingMask = true; protectedPreview = true }
+    func finishCanvasTool() { drawingMask = false; movingMask = false }
     func update(_ body: (inout ReviewDocument) -> Void) {
         guard !busy, let index = documents.firstIndex(where: { $0.id == selectedID }) else { return }
         let previous = documents[index]
@@ -111,6 +122,13 @@ final class Workspace: ObservableObject {
     }
     func removeMask(_ id: UUID) {
         update { doc in doc.masks.removeAll { $0.id == id }; doc.pages[pageIndex].reviewed = false }
+    }
+    func moveMask(_ id: UUID, to rect: CGRect) {
+        update { doc in
+            guard let index = doc.masks.firstIndex(where: { $0.id == id }) else { return }
+            doc.masks[index].rect = rect
+            doc.pages[doc.masks[index].pageIndex].reviewed = false
+        }
     }
     func addTerm() {
         let term = customTerm.trimmingCharacters(in: .whitespacesAndNewlines)
