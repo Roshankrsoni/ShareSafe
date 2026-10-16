@@ -105,6 +105,10 @@ struct OfficeRibbon: View {
     @ViewBuilder private var protectTools: some View {
         ribbonButton("Draw mask", "rectangle.dashed", selected: model.drawingMask) { model.drawingMask.toggle(); model.protectedPreview = true }
             .disabled(!hasDocument || model.document?.kind == .text)
+        if model.document?.kind != .text {
+            MaskShapePicker(selection: $model.manualMaskShape).frame(width: 130)
+                .disabled(!hasDocument)
+        }
         ribbonButton("Mask style", "paintpalette") { showStyle.toggle() }
             .disabled(!hasDocument || model.document?.kind == .text)
             .popover(isPresented: $showStyle) { MaskOptions().environmentObject(model) }

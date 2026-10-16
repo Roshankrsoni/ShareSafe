@@ -8,6 +8,23 @@ Build **Recognition Quality Review** first, then **Visual Privacy Suggestions** 
 
 These priorities are engineering/product judgments, not validated market demand. Competitor documentation establishes features offered, not adoption, accuracy, sales, or customer willingness to pay. Interview 5–8 people who routinely share resumes, identity scans, invoices, or client briefs before committing to the larger queue project. Use fictional documents in demonstrations and ask where they still manually check or repeat work.
 
+## Added feature: face-region review and round masks
+
+This feature is now implemented in the Mac app. Apple Vision's `VNDetectFaceRectanglesRequest` returns face rectangles; `VNFaceObservation.boundingBox` uses normalized image coordinates with a lower-left origin. ShareSafe processes the already rendered page image locally and shows a padded oval suggestion titled **Face region**. It neither identifies nor names a person. The suggestion starts pending and needs the same explicit Keep/Redact decision as other findings. Face suggestions apply to new PDF and image imports when the **Suggest face regions** setting is enabled. Text files do not have face geometry.
+
+Users can choose **Rectangle** or **Round** while drawing a manual mask. Round uses an ellipse based on the drag bounds, which suits face regions and other curved details. The selected geometry is retained in the session, appears in both views, and is written into the exported page image using the same shape-aware mask renderer. Solid masks remain the recommended treatment for sensitive material; a round blur remains visual concealment only.
+
+### Research and product boundaries
+
+- Apple documents `VNDetectFaceRectanglesRequest` as returning face bounding boxes and `VNFaceObservation` as its result. Its normalized bounding boxes use a lower-left coordinate origin. This makes it possible to use the page's existing OCR, preview, and export coordinate system without uploading images or storing face identity data. [Apple: face rectangle request](https://developer.apple.com/documentation/vision/vndetectfacerectanglesrequest), [Apple: face observation](https://developer.apple.com/documentation/vision/vnfaceobservation), [Apple: bounding box](https://developer.apple.com/documentation/vision/vndetectedobjectobservation/boundingbox)
+- A face box is a candidate region, not a person identity or a privacy judgment. Profile photos, illustrations, tiny faces, occlusion, rotation, and low-quality scans can cause misses or false matches. Use neutral “Face region” labels and require human review; do not announce the document is face-free after a scan.
+- A bounding ellipse only covers the detected face region. It does not cover the rest of a portrait or prove that a person cannot be recognized from clothing, captions, context, or other images. Use the manual rectangle/round draw tool to cover a larger portrait when needed.
+- Elliptical masks must preserve the original pixels outside the ellipse, including on a page export. The export renderer therefore creates a source-preserving tile, applies the chosen solid or blur effect within the ellipse, and passes that tile through the same output pixel comparison as rectangle masks.
+
+### Future quality work
+
+Add fictional and consented fixtures for portrait photos, scanned IDs, group photos, small/cropped faces, illustrated faces, rotations, annotations, and faces near page edges. Measure face-region coverage, misses, false suggestions per page, latency, and memory on the minimum supported OS and hardware. Validate ellipse coverage visually and verify that preview and export agree at rotated/cropped page coordinates. Keep the feature optional if measured noise makes page review worse.
+
 ## Current baseline and gaps
 
 The app renders PDFs, combines embedded text and Vision OCR, suggests sensitive text, supports exact matches and manual rectangles, and creates image-only PDF/PNG or replaced-text exports. Existing controls cover individual decisions, custom solid/blur masks, original/protected views, undo/redo, page zoom, recovery copies, password prompts, and export receipts.

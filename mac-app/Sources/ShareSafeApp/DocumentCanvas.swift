@@ -7,7 +7,13 @@ struct DocumentCanvas: View {
     var body: some View {
         VStack(spacing: 0) {
             if model.drawingMask {
-                HStack { Image(systemName: "cursorarrow.rays"); Text("Drag over a detail to cover it."); Spacer(); Button("Done") { model.drawingMask = false } }.font(.caption).padding(12).background(Style.accent.opacity(0.09))
+                HStack {
+                    Image(systemName: "cursorarrow.rays")
+                    Text("Drag over a detail to cover it.")
+                    MaskShapePicker(selection: $model.manualMaskShape)
+                    Spacer()
+                    Button("Done") { model.drawingMask = false }
+                }.font(.caption).padding(12).background(Style.accent.opacity(0.09))
             }
             GeometryReader { geometry in
                 ScrollView([.vertical, .horizontal]) {
@@ -22,7 +28,7 @@ struct DocumentCanvas: View {
                             Group {
                                 if doc.kind == .text { textPage(page, doc: doc, scale: pageWidth(page, geometry: geometry.size) / 612) }
                                 else {
-                                    ImagePage(page: page, findings: model.pageFindings, masks: doc.masks.filter { $0.pageIndex == model.pageIndex }, appearance: doc.maskAppearance, protectedPreview: model.protectedPreview, drawing: model.drawingMask, selected: model.selectedFinding, onMask: { model.addMask($0) })
+                                    ImagePage(page: page, findings: model.pageFindings, masks: doc.masks.filter { $0.pageIndex == model.pageIndex }, appearance: doc.maskAppearance, protectedPreview: model.protectedPreview, drawing: model.drawingMask, drawingShape: model.manualMaskShape, selected: model.selectedFinding, onMask: { model.addMask($0) })
                                         .id("\(doc.id)-\(page.index)")
                                 }
                             }
@@ -77,6 +83,7 @@ struct ImagePage: View {
     let appearance: MaskAppearance
     let protectedPreview: Bool
     let drawing: Bool
+    let drawingShape: ManualMaskShape
     let selected: UUID?
     let onMask: (CGRect) -> Void
     @State private var image: NSImage?
@@ -106,10 +113,11 @@ struct ImagePage: View {
                 let color: Color = protectedPreview && finding.decision == .redact ? .black : finding.decision == .keep ? .clear : .orange.opacity(0.18)
                 Group {
                     if protectedPreview && finding.decision == .redact {
-                        MaskTile(source: sourceImage, rect: entry.element, appearance: appearance)
+                        MaskTile(source: sourceImage, rect: entry.element, appearance: appearance, shape: finding.maskShape)
                     } else { Rectangle().fill(color) }
                 }
-                    .overlay(Rectangle().stroke(selected == finding.id ? Style.accent : Color.clear, lineWidth: 2))
+                    .clipShape(drawingShapeView(finding.maskShape))
+                    .overlay(drawingShapeView(finding.maskShape).stroke(selected == finding.id ? Style.accent : Color.clear, lineWidth: 2))
                     .frame(width: frame.width, height: frame.height)
                     .offset(x: frame.minX, y: frame.minY)
                     .accessibilityLabel("\(finding.kind.title), \(finding.decision.rawValue)")
@@ -120,16 +128,18 @@ struct ImagePage: View {
         if protectedPreview {
             ForEach(masks) { mask in
                 let frame = displayRect(mask.rect, size: size)
-                MaskTile(source: sourceImage, rect: mask.rect, appearance: appearance).frame(width: frame.width, height: frame.height)
-                    .offset(x: frame.minX, y: frame.minY).accessibilityLabel("Manual redaction")
+                MaskTile(source: sourceImage, rect: mask.rect, appearance: appearance, shape: mask.shape).frame(width: frame.width, height: frame.height)
+                    .clipShape(drawingShapeView(mask.shape))
+                    .overlay(drawingShapeView(mask.shape).stroke(.black.opacity(0.08), lineWidth: 0.5))
+                    .offset(x: frame.minX, y: frame.minY).accessibilityLabel("Manual \(mask.shape.rawValue.lowercased()) redaction")
             }
         }
     }
     @ViewBuilder private var dragPreview: some View {
         if let start, let current {
             let rect = dragRect(start, current)
-            Rectangle().fill(Style.accent.opacity(0.25))
-                .overlay(Rectangle().stroke(Style.accent, style: StrokeStyle(lineWidth: 1, dash: [4])))
+            drawingShapeView(drawingShape).fill(Style.accent.opacity(0.25))
+                .overlay(drawingShapeView(drawingShape).stroke(Style.accent, style: StrokeStyle(lineWidth: 1, dash: [4])))
                 .frame(width: rect.width, height: rect.height).offset(x: rect.minX, y: rect.minY)
         }
     }
@@ -151,6 +161,20 @@ struct ImagePage: View {
     }
     private func clamped(_ point: CGPoint, size: CGSize) -> CGPoint { CGPoint(x: min(max(point.x, 0), size.width), y: min(max(point.y, 0), size.height)) }
     private func dragRect(_ a: CGPoint, _ b: CGPoint) -> CGRect { CGRect(x: min(a.x, b.x), y: min(a.y, b.y), width: abs(a.x - b.x), height: abs(a.y - b.y)) }
+    private func drawingShapeView(_ shape: ManualMaskShape) -> AnyShape {
+        shape == .round ? AnyShape(Ellipse()) : AnyShape(Rectangle())
+    }
+}
+
+struct MaskShapePicker: View {
+    @Binding var selection: ManualMaskShape
+    var body: some View {
+        Picker("Mask shape", selection: $selection) {
+            Label("Rectangle", systemImage: "rectangle").tag(ManualMaskShape.rectangle)
+            Label("Round", systemImage: "circle").tag(ManualMaskShape.round)
+        }.pickerStyle(.segmented).labelsHidden().frame(width: 150)
+            .accessibilityLabel("Manual mask shape")
+    }
 }
 
 struct ExportSheet: View {
@@ -206,7 +230,7 @@ struct PrivacySheet: View {
         VStack(alignment: .leading, spacing: 17) {
             Label("Private, with clear limits.", systemImage: "lock.shield").font(.title2.weight(.semibold)).foregroundStyle(Style.accent)
             Text("Your documents are processed locally. ShareSafe has no account, upload service, analytics or saved document history. Preferences are stored; document content is kept only for the current session.").lineSpacing(4)
-            Text("Detection combines PDF text with local OCR in languages supported by your macOS version. Indian ID and international phone patterns are suggestions, not identity validation. Addresses, handwriting, faces, indirect identifiers and unfamiliar formats can be missed. Review every page and use custom text or manual masks.").lineSpacing(4)
+            Text("Detection combines PDF text with local OCR in languages supported by your macOS version. Indian ID and international phone patterns are suggestions, not identity validation. Optional face-region suggestions run on new PDF and image imports, but can miss faces or flag illustrations; they never identify people. Addresses, handwriting, faces, indirect identifiers and unfamiliar formats can be missed. Review every page and use custom text or manual masks.").lineSpacing(4)
             Text("PDF exports are rebuilt from images. They discard the original object structure and lose searchable text, forms and signatures. Text aliases apply only to plain-text files.").lineSpacing(4)
             Text("Limits: 25 MB per file, 40 PDF pages, 12 megapixels per image and 1 MB UTF-8 text. Large PDFs may exceed the total rendering limit. Multi-frame images are rejected. PDFs with forms or annotations offer an in-app flattened review copy. Password-protected PDFs can be unlocked for the session.").font(.callout).foregroundStyle(.secondary)
             Text("Solid masks replace source pixels. Blur only obscures their appearance and may leave details recognizable. Local processing does not guarantee secure memory erasure. Your operating system may swap memory or collect crash diagnostics. Saved exports follow the destination’s backup and access settings.").font(.caption).foregroundStyle(.secondary)

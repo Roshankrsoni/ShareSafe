@@ -6,11 +6,19 @@ import CoreImage
 public enum MaskRenderer {
     private static let ciContext = CIContext(options: [.cacheIntermediates: false])
 
-    public static func tile(source: CGImage, rect: CGRect, appearance: MaskAppearance) throws -> CGImage {
+    public static func tile(source: CGImage, rect: CGRect, appearance: MaskAppearance, shape: ManualMaskShape = .rectangle) throws -> CGImage {
         guard appearance.isValid, !rect.isEmpty, let context = DocumentProcessor.makeContext(width: Int(rect.width), height: Int(rect.height)) else {
             throw ShareSafeError.invalid("Could not render this mask.")
         }
         let bounds = CGRect(x: 0, y: 0, width: rect.width, height: rect.height)
+        if shape == .round {
+            let crop = CGRect(x: rect.minX, y: Double(source.height) - rect.maxY, width: rect.width, height: rect.height)
+            guard let originalTile = source.cropping(to: crop) else { throw ShareSafeError.invalid("Could not crop this round mask.") }
+            context.draw(originalTile, in: bounds)
+            context.saveGState()
+            context.addEllipse(in: bounds)
+            context.clip()
+        }
         context.setFillColor(appearance.color)
         context.fill(bounds)
         if appearance.effect == .blur {
@@ -20,6 +28,7 @@ public enum MaskRenderer {
             guard let blurred = ciContext.createCGImage(filtered, from: rect) else { throw ShareSafeError.invalid("Blur rendering failed.") }
             context.draw(blurred, in: bounds)
         }
+        if shape == .round { context.restoreGState() }
         guard let output = context.makeImage() else { throw ShareSafeError.invalid("Mask rendering failed.") }
         return output
     }

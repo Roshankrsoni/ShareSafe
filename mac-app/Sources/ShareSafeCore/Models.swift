@@ -2,7 +2,7 @@ import Foundation
 import CoreGraphics
 
 public enum SensitiveKind: String, CaseIterable, Codable, Identifiable, Sendable {
-    case profile, email, phone, paymentCard, identity, aadhaar, pan, bankAccount, passport, dateOfBirth, address, upi, person, custom
+    case profile, email, phone, paymentCard, identity, aadhaar, pan, bankAccount, passport, dateOfBirth, address, upi, person, face, custom
     public var id: String { rawValue }
     public var title: String {
         switch self {
@@ -19,6 +19,7 @@ public enum SensitiveKind: String, CaseIterable, Codable, Identifiable, Sendable
         case .address: return "Address"
         case .upi: return "UPI / payment handle"
         case .person: return "Person name"
+        case .face: return "Face region"
         case .custom: return "Custom text"
         }
     }
@@ -33,6 +34,7 @@ public enum SensitiveKind: String, CaseIterable, Codable, Identifiable, Sendable
         case .dateOfBirth: return "calendar"
         case .address: return "mappin.and.ellipse"
         case .person: return "person"
+        case .face: return "face.smiling"
         case .custom: return "text.magnifyingglass"
         }
     }
@@ -40,6 +42,10 @@ public enum SensitiveKind: String, CaseIterable, Codable, Identifiable, Sendable
 
 public enum ReviewDecision: String, Sendable { case pending, redact, keep }
 public enum DocumentKind: String, Sendable { case pdf, image, text }
+public enum ManualMaskShape: String, CaseIterable, Identifiable, Sendable {
+    case rectangle = "Rectangle", round = "Round"
+    public var id: String { rawValue }
+}
 public enum SharingPolicy: String, CaseIterable, Identifiable, Sendable {
     case external = "External sharing", ai = "AI context"
     public var id: String { rawValue }
@@ -57,9 +63,10 @@ public struct Finding: Identifiable, Sendable {
     /// Normalized coordinates, bottom-left origin, matching the rendered image.
     public var rectangles: [CGRect]
     public var decision: ReviewDecision
-    public init(id: UUID = UUID(), kind: SensitiveKind, value: String, pageIndex: Int = 0, range: NSRange, rectangles: [CGRect] = [], decision: ReviewDecision = .pending) {
+    public var maskShape: ManualMaskShape
+    public init(id: UUID = UUID(), kind: SensitiveKind, value: String, pageIndex: Int = 0, range: NSRange, rectangles: [CGRect] = [], decision: ReviewDecision = .pending, maskShape: ManualMaskShape = .rectangle) {
         self.id = id; self.kind = kind; self.value = value; self.pageIndex = pageIndex
-        self.range = range; self.rectangles = rectangles; self.decision = decision
+        self.range = range; self.rectangles = rectangles; self.decision = decision; self.maskShape = maskShape
     }
 }
 
@@ -67,7 +74,8 @@ public struct ManualMask: Identifiable, Sendable {
     public var id = UUID()
     public var pageIndex: Int
     public var rect: CGRect
-    public init(pageIndex: Int, rect: CGRect) { self.pageIndex = pageIndex; self.rect = rect }
+    public var shape: ManualMaskShape
+    public init(pageIndex: Int, rect: CGRect, shape: ManualMaskShape = .rectangle) { self.pageIndex = pageIndex; self.rect = rect; self.shape = shape }
 }
 
 public struct TextRegion: Sendable {

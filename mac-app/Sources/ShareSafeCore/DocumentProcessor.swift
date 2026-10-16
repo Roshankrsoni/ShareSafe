@@ -20,7 +20,7 @@ public enum DocumentProcessor {
     public static let maximumBytes = 25 * 1024 * 1024
     public static let maximumPixels = 60_000_000
 
-    public static func load(url: URL, includeNames: Bool, prepareCopy: Bool = false, password: String? = nil, preview: @escaping @Sendable (DocumentScanPreview) -> Void = { _ in }, progress: @escaping @Sendable (String) -> Void = { _ in }) throws -> ReviewDocument {
+    public static func load(url: URL, includeNames: Bool, includeFaces: Bool = false, prepareCopy: Bool = false, password: String? = nil, preview: @escaping @Sendable (DocumentScanPreview) -> Void = { _ in }, progress: @escaping @Sendable (String) -> Void = { _ in }) throws -> ReviewDocument {
         let access = url.startAccessingSecurityScopedResource()
         defer { if access { url.stopAccessingSecurityScopedResource() } }
         let values = try url.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
@@ -92,7 +92,7 @@ public enum DocumentProcessor {
                     guard let image = context.makeImage() else { throw ShareSafeError.invalid("The page could not be rendered.") }
                     preview(DocumentScanPreview(image: image, text: nil, pageIndex: index, pageCount: pdf.numberOfPages))
                     try Task.checkCancellation()
-                    var result = try recognize(image, index: index, pointSize: CGSize(width: width, height: height), includeNames: includeNames)
+                    var result = try recognize(image, index: index, pointSize: CGSize(width: width, height: height), includeNames: includeNames, includeFaces: includeFaces)
                     if let nativePage = textPDF?.page(at: index) {
                         supplementNativeText(nativePage, cgPage: page, result: &result, includeNames: includeNames)
                         if prepareCopy { supplementAnnotationText(nativePage, cgPage: page, result: &result, includeNames: includeNames) }
@@ -116,7 +116,7 @@ public enum DocumentProcessor {
             preview(DocumentScanPreview(image: image, text: nil, pageIndex: 0, pageCount: 1))
             try Task.checkCancellation()
             progress("Reading text on the image…")
-            let result = try recognize(image, index: 0, pointSize: CGSize(width: image.width, height: image.height), includeNames: includeNames)
+            let result = try recognize(image, index: 0, pointSize: CGSize(width: image.width, height: image.height), includeNames: includeNames, includeFaces: includeFaces)
             pages = [result.0]; findings = result.1
         } else {
             throw ShareSafeError.invalid("Supported files: PDF, PNG, JPEG, HEIC, single-frame TIFF, TXT and Markdown. Word documents are not supported yet.")
@@ -127,7 +127,7 @@ public enum DocumentProcessor {
         return document
     }
 
-    static func recognize(_ image: CGImage, index: Int, pointSize: CGSize, includeNames: Bool) throws -> (DocumentPage, [Finding]) {
+    static func recognize(_ image: CGImage, index: Int, pointSize: CGSize, includeNames: Bool, includeFaces: Bool = false) throws -> (DocumentPage, [Finding]) {
         let request = VNRecognizeTextRequest()
         request.recognitionLevel = .accurate
         request.usesLanguageCorrection = false
@@ -136,7 +136,9 @@ public enum DocumentProcessor {
         let preferred = ["en-US", "hi-IN", "mr-IN", "ta-IN", "te-IN", "bn-IN", "gu-IN", "kn-IN", "ml-IN", "pa-IN", "fr-FR", "de-DE", "es-ES", "pt-BR", "it-IT", "zh-Hans", "zh-Hant", "ja-JP", "ko-KR", "ru-RU", "uk-UA", "ar-SA"]
         request.recognitionLanguages = preferred.filter { supported.contains($0) }
         request.minimumTextHeight = 0.005
-        try VNImageRequestHandler(cgImage: image).perform([request])
+        let faceRequest = VNDetectFaceRectanglesRequest()
+        let requests: [VNRequest] = includeFaces ? [request, faceRequest] : [request]
+        try VNImageRequestHandler(cgImage: image).perform(requests)
         try Task.checkCancellation()
         var text = "", regions: [TextRegion] = [], findings: [Finding] = []
         let detector = SensitiveDetector(includeNames: includeNames)
@@ -161,6 +163,15 @@ public enum DocumentProcessor {
             for var finding in detector.detect(text, pageIndex: index) where finding.kind == .person {
                 finding.rectangles = regions.filter { NSIntersectionRange($0.range, finding.range).length > 0 }.map(\.rect)
                 if !finding.rectangles.isEmpty { findings.append(finding) }
+            }
+        }
+        if includeFaces {
+            for (faceIndex, observation) in (faceRequest.results ?? []).filter({ $0.confidence >= 0.45 }).prefix(30).enumerated() {
+                let box = observation.boundingBox
+                let padded = box.insetBy(dx: -box.width * 0.12, dy: -box.height * 0.16)
+                    .intersection(CGRect(x: 0, y: 0, width: 1, height: 1))
+                guard padded.width > 0.005, padded.height > 0.005 else { continue }
+                findings.append(Finding(kind: .face, value: "Face region \(faceIndex + 1)", pageIndex: index, range: NSRange(location: 0, length: 0), rectangles: [padded], maskShape: .round))
             }
         }
         let page = DocumentPage(index: index, imageData: try png(image), pixelWidth: image.width, pixelHeight: image.height, pointWidth: pointSize.width, pointHeight: pointSize.height, text: text, regions: regions)
@@ -320,11 +331,12 @@ public enum SafeExporter {
                     context.draw(source, in: bounds)
                     context.setAllowsAntialiasing(false)
 
-                    let automatic = document.findings.filter { $0.pageIndex == page.index && $0.decision == .redact }.flatMap(\.rectangles)
-                    let manual = document.masks.filter { $0.pageIndex == page.index }.map(\.rect)
-                    let rects = (automatic + manual).map { pixelRect($0, width: source.width, height: source.height) }
-                    for rect in rects {
-                        let tile = try MaskRenderer.tile(source: source, rect: rect, appearance: document.maskAppearance)
+                    let automatic = document.findings.filter { $0.pageIndex == page.index && $0.decision == .redact }
+                        .flatMap { finding in finding.rectangles.map { ($0, finding.maskShape) } }
+                    let manual = document.masks.filter { $0.pageIndex == page.index }.map { ($0.rect, $0.shape) }
+                    let masks = (automatic + manual).map { (pixelRect($0.0, width: source.width, height: source.height), $0.1) }
+                    for (rect, shape) in masks {
+                        let tile = try MaskRenderer.tile(source: source, rect: rect, appearance: document.maskAppearance, shape: shape)
                         context.draw(tile, in: rect)
                         guard let check = context.makeImage(), MaskRenderer.verify(check, tile: tile, rect: rect) else {
                             throw ShareSafeError.invalid("Mask verification failed. No file was saved.")

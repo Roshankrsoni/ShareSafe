@@ -119,7 +119,7 @@ struct StudioToolbar: View {
                 Spacer(minLength: 0)
                 Button { model.undo() } label: { Image(systemName: "arrow.uturn.backward") }.disabled(!model.canUndo).help("Undo")
                 Button { model.redo() } label: { Image(systemName: "arrow.uturn.forward") }.disabled(!model.canRedo).help("Redo")
-                Button { model.drawingMask.toggle(); model.protectedPreview = true } label: { Image(systemName: "rectangle.dashed").foregroundStyle(model.drawingMask ? Style.accent : .primary) }.disabled(model.document?.kind == .text).help("Draw mask")
+                Button { model.drawingMask.toggle(); model.protectedPreview = true } label: { Image(systemName: model.manualMaskShape == .round ? "circle.dashed" : "rectangle.dashed").foregroundStyle(model.drawingMask ? Style.accent : .primary) }.disabled(model.document?.kind == .text).help(model.manualMaskShape == .round ? "Draw a round mask" : "Draw a rectangular mask")
                 Button { showStyle = true } label: { Image(systemName: "paintpalette") }.disabled(model.document?.kind == .text).help("Mask style").popover(isPresented: $showStyle) { MaskOptions().environmentObject(model) }
             }
             HStack {
@@ -227,6 +227,7 @@ struct StudioInspector: View {
                 if model.document?.kind != .text {
                     Divider()
                     Button { model.drawingMask.toggle(); model.protectedPreview = true } label: { Label(model.drawingMask ? "Finish drawing" : "Draw a manual mask", systemImage: "rectangle.dashed") }.buttonStyle(.bordered)
+                    MaskShapePicker(selection: $model.manualMaskShape)
                     Text("Cover photos, QR codes, handwriting or details that weren’t detected.").font(.caption).foregroundStyle(.secondary)
                     MaskOptions().padding(.horizontal, -16)
                 }

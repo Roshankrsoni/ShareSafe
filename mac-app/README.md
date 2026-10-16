@@ -30,6 +30,8 @@ See [the October feature research](docs/FEATURE-RESEARCH-2026-10.md) for the pro
 - PDF, single-frame images, and UTF-8 plain text import; embedded PDF text extraction plus language-aware local OCR.
 - Email, Indian/international phones, PAN/Aadhaar candidates, UPI handles, Luhn-checked payment cards, US identity-number patterns, labeled bank/passport/birth-date/address fields personal profile links and contextual name suggestions.
 - Per-finding Keep/Redact decisions, exact custom matching, drawn image masks and per-page review gates.
+- Optional, on-device face-region suggestions for PDFs and images. ShareSafe marks candidate regions for human review and does not identify people.
+- Manual rectangular or round (elliptical) masks, with shape-preserving previews and exports. Choose either shape while drawing.
 - Custom opaque mask colors and adjustable Gaussian blur. Blur is visual concealment only and may leave details recognizable; choose Solid for sensitive exports.
 - Undo/redo review edits, including mask appearance changes.
 - Original/protected previews; deterministic aliases for plain-text AI sharing.

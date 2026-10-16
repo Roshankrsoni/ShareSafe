@@ -11,6 +11,7 @@ final class Workspace: ObservableObject {
     @Published var selectedFinding: UUID?
     @Published var protectedPreview = true
     @Published var drawingMask = false
+    @Published var manualMaskShape: ManualMaskShape = .rectangle
     @Published var busy = false
     @Published var progress = ""
     @Published var importingName: String?
@@ -104,7 +105,7 @@ final class Workspace: ObservableObject {
     func addMask(_ rect: CGRect) {
         guard rect.width > 0.003, rect.height > 0.003 else { return }
         update { doc in
-            doc.masks.append(ManualMask(pageIndex: pageIndex, rect: rect))
+            doc.masks.append(ManualMask(pageIndex: pageIndex, rect: rect, shape: manualMaskShape))
             doc.pages[pageIndex].reviewed = false
         }
     }
@@ -133,10 +134,11 @@ final class Workspace: ObservableObject {
         busy = true; importingName = url.lastPathComponent; scanPreview = nil; cancelling = false
         progress = "Opening document…"; error = nil; notice = nil; receipt = nil
         let includeNames = UserDefaults.standard.object(forKey: "detectNames") as? Bool ?? true
+        let includeFaces = UserDefaults.standard.object(forKey: "detectFaces") as? Bool ?? true
         let id = UUID(); operationID = id
         task = Task {
             let worker = Task.detached(priority: .userInitiated) {
-                try DocumentProcessor.load(url: url, includeNames: includeNames, prepareCopy: prepareCopy, password: password, preview: { preview in
+                try DocumentProcessor.load(url: url, includeNames: includeNames, includeFaces: includeFaces, prepareCopy: prepareCopy, password: password, preview: { preview in
                     Task { @MainActor [weak self] in
                         guard let self, self.operationID == id, !self.cancelling else { return }
                         self.scanPreview = preview

@@ -55,6 +55,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 struct PreferencesView: View {
     @AppStorage("detectNames") private var detectNames = true
+    @AppStorage("detectFaces") private var detectFaces = true
     @AppStorage("appearance") private var appearance = "Light"
     private var recognitionLanguages: String {
         let request = VNRecognizeTextRequest()
@@ -67,6 +68,8 @@ struct PreferencesView: View {
             Picker("Appearance", selection: $appearance) { ForEach(["System", "Light", "Dark"], id: \.self) { Text($0) } }
             Toggle("Suggest person names", isOn: $detectNames)
             Text("Applies to new imports. Name detection is approximate; review suggestions and manually cover details it misses.").font(.caption).foregroundStyle(.secondary)
+            Toggle("Suggest face regions", isOn: $detectFaces)
+            Text("Uses on-device Vision to suggest face-shaped regions in PDFs and images. It does not identify people. Check every page; missed faces and false matches are possible. Applies to new imports.").font(.caption).foregroundStyle(.secondary)
             Section("Text recognition") {
                 Text("PDF text + on-device OCR").font(.callout.weight(.medium))
                 Text("Embedded PDF text is read directly, including regional scripts when the PDF has valid text encoding. Image-only scans depend on the languages supported by this Mac.").font(.caption).foregroundStyle(.secondary)

@@ -47,17 +47,18 @@ struct MaskTile: View {
     let source: CGImage?
     let rect: CGRect
     let appearance: MaskAppearance
+    var shape: ManualMaskShape = .rectangle
     @State private var tile: NSImage?
-    private var renderKey: String { "\(rect)-\(appearance)" }
+    private var renderKey: String { "\(rect)-\(appearance)-\(shape.rawValue)" }
     var body: some View {
         ZStack {
             Color(cgColor: appearance.color)
             if appearance.effect == .blur, let tile { Image(nsImage: tile).resizable().interpolation(.high) }
-        }.task(id: renderKey) {
+        }.clipShape(shape == .round ? AnyShape(Ellipse()) : AnyShape(Rectangle())).task(id: renderKey) {
             guard appearance.effect == .blur, let source else { tile = nil; return }
-            let maskRect = rect, style = appearance
+            let maskRect = rect, style = appearance, maskShape = shape
             let output = await Task.detached(priority: .userInitiated) {
-                return try? MaskRenderer.tile(source: source, rect: SafeExporter.pixelRect(maskRect, width: source.width, height: source.height), appearance: style)
+                return try? MaskRenderer.tile(source: source, rect: SafeExporter.pixelRect(maskRect, width: source.width, height: source.height), appearance: style, shape: maskShape)
             }.value
             guard !Task.isCancelled else { return }
             if let output { tile = NSImage(cgImage: output, size: .zero) }
