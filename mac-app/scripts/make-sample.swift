@@ -1,0 +1,57 @@
+import Foundation
+import CoreGraphics
+import CoreText
+
+let url = URL(fileURLWithPath: CommandLine.arguments[1])
+var media = CGRect(x: 0, y: 0, width: 612, height: 792)
+guard let context = CGContext(url as CFURL, mediaBox: &media, nil) else { fatalError("Cannot create sample") }
+context.beginPDFPage(nil)
+func color(_ r: CGFloat, _ g: CGFloat, _ b: CGFloat) -> CGColor { CGColor(red: r, green: g, blue: b, alpha: 1) }
+let ink = color(0.12, 0.19, 0.19), muted = color(0.43, 0.48, 0.46), teal = color(0.13, 0.40, 0.34)
+func text(_ value: String, x: CGFloat, y: CGFloat, size: CGFloat = 11, font: String = "Helvetica", fill: CGColor? = nil) {
+    let attributes: [NSAttributedString.Key: Any] = [NSAttributedString.Key(kCTFontAttributeName as String): CTFontCreateWithName(font as CFString, size, nil), NSAttributedString.Key(kCTForegroundColorAttributeName as String): fill ?? ink]
+    context.textPosition = CGPoint(x: x, y: y)
+    CTLineDraw(CTLineCreateWithAttributedString(NSAttributedString(string: value, attributes: attributes)), context)
+}
+func rule(_ y: CGFloat) { context.setStrokeColor(color(0.83, 0.86, 0.82)); context.setLineWidth(0.6); context.move(to: CGPoint(x: 48, y: y)); context.addLine(to: CGPoint(x: 564, y: y)); context.strokePath() }
+context.setFillColor(color(0.985, 0.98, 0.96)); context.fill(media)
+context.setFillColor(teal); context.fill(CGRect(x: 48, y: 697, width: 32, height: 32))
+text("N", x: 57, y: 705, size: 20, font: "Helvetica-Bold", fill: CGColor(gray: 1, alpha: 1))
+text("NORTHSTAR", x: 91, y: 714, size: 11, font: "Helvetica-Bold")
+text("Independent design studio", x: 91, y: 700, size: 8, fill: muted)
+text("PROJECT BRIEF", x: 462, y: 716, size: 8, font: "Helvetica-Bold", fill: teal)
+text("09 OCTOBER 2026", x: 461, y: 701, size: 8, fill: muted)
+rule(675)
+text("A new chapter.", x: 48, y: 619, size: 37, font: "Georgia")
+text("Autumn brand refresh / Creative direction", x: 50, y: 589, size: 11, fill: muted)
+context.setFillColor(color(0.91, 0.94, 0.90)); context.fill(CGRect(x: 48, y: 536, width: 516, height: 31))
+text("FICTIONAL SAMPLE", x: 60, y: 548, size: 8, font: "Helvetica-Bold", fill: teal)
+text("Explore ShareSafe with invented client information.", x: 178, y: 548, size: 9, fill: teal)
+text("01", x: 48, y: 503, size: 9, font: "Helvetica-Bold", fill: teal)
+text("The opportunity", x: 79, y: 501, size: 15, font: "Georgia")
+text("Create a considered visual identity for Northstar’s next chapter.", x: 79, y: 474)
+text("The direction should feel clear, confident and unmistakably human.", x: 79, y: 456)
+text("Deliverables: brand concept, visual system and a short launch guide.", x: 79, y: 438)
+rule(414)
+text("02", x: 48, y: 386, size: 9, font: "Helvetica-Bold", fill: teal)
+text("Client contact", x: 79, y: 384, size: 15, font: "Georgia")
+text("PREPARED FOR", x: 79, y: 354, size: 8, fill: muted)
+text("Olivia Bennett", x: 220, y: 353, size: 11, font: "Helvetica-Bold")
+text("EMAIL", x: 79, y: 329, size: 8, fill: muted)
+text("olivia.bennett@example.com", x: 220, y: 328)
+text("PHONE", x: 79, y: 304, size: 8, fill: muted)
+text("+1 415-555-0182", x: 220, y: 303)
+rule(279)
+text("03", x: 48, y: 251, size: 9, font: "Helvetica-Bold", fill: teal)
+text("Internal billing", x: 79, y: 249, size: 15, font: "Georgia")
+text("TEST CARD", x: 79, y: 219, size: 8, fill: muted)
+text("4111 1111 1111 1111", x: 220, y: 218)
+text("PROJECT REFERENCE", x: 79, y: 194, size: 8, fill: muted)
+text("NS-2026-104", x: 220, y: 193)
+rule(168)
+text("A careful handoff", x: 48, y: 138, size: 14, font: "Georgia")
+text("Remove personal contact and payment details before sharing", x: 48, y: 116, size: 10, fill: muted)
+text("this brief with our external design partner.", x: 48, y: 101, size: 10, fill: muted)
+text("NORTHSTAR STUDIO  /  FICTIONAL DOCUMENT", x: 48, y: 47, size: 7, fill: muted)
+text("01", x: 552, y: 47, size: 8, fill: muted)
+context.endPDFPage(); context.closePDF()
