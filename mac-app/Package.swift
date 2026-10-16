@@ -8,7 +8,8 @@ let package = Package(
     targets: [
         .target(name: "ShareSafeCore"),
         .executableTarget(name: "ShareSafeApp", dependencies: ["ShareSafeCore"]),
-        .testTarget(name: "ShareSafeCoreTests", dependencies: ["ShareSafeCore"])
+        .testTarget(name: "ShareSafeCoreTests", dependencies: ["ShareSafeCore"]),
+        .testTarget(name: "ShareSafeAppTests", dependencies: ["ShareSafeApp", "ShareSafeCore"])
     ],
     swiftLanguageModes: [.v5]
 )

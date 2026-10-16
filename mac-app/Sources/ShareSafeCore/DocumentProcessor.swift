@@ -7,11 +7,20 @@ import CryptoKit
 import PDFKit
 import CoreImage
 
+/// Transient, immutable page raster shared with the UI before OCR begins.
+/// CGImage is immutable; it is safe to retain across the worker/UI boundary.
+public struct DocumentScanPreview: @unchecked Sendable {
+    public let image: CGImage?
+    public let text: String?
+    public let pageIndex: Int
+    public let pageCount: Int
+}
+
 public enum DocumentProcessor {
     public static let maximumBytes = 25 * 1024 * 1024
     public static let maximumPixels = 60_000_000
 
-    public static func load(url: URL, includeNames: Bool, prepareCopy: Bool = false, password: String? = nil, progress: @escaping @Sendable (String) -> Void = { _ in }) throws -> ReviewDocument {
+    public static func load(url: URL, includeNames: Bool, prepareCopy: Bool = false, password: String? = nil, preview: @escaping @Sendable (DocumentScanPreview) -> Void = { _ in }, progress: @escaping @Sendable (String) -> Void = { _ in }) throws -> ReviewDocument {
         let access = url.startAccessingSecurityScopedResource()
         defer { if access { url.stopAccessingSecurityScopedResource() } }
         let values = try url.resourceValues(forKeys: [.fileSizeKey, .isRegularFileKey])
@@ -26,6 +35,8 @@ public enum DocumentProcessor {
             guard data.count <= 1_000_000, let text = String(data: data, encoding: .utf8), !text.contains("\0") else {
                 throw ShareSafeError.invalid("Use a UTF-8 text file smaller than 1 MB, without binary content.")
             }
+            preview(DocumentScanPreview(image: nil, text: String(text.prefix(4000)), pageIndex: 0, pageCount: 1))
+            try Task.checkCancellation()
             progress("Finding sensitive text…")
             let findings = SensitiveDetector(includeNames: includeNames).detect(text)
             return ReviewDocument(name: url.lastPathComponent, sourceURL: url, kind: .text, pages: [DocumentPage(index: 0, text: text)], findings: findings)
@@ -79,6 +90,8 @@ public enum DocumentProcessor {
                         context.restoreGState()
                     }
                     guard let image = context.makeImage() else { throw ShareSafeError.invalid("The page could not be rendered.") }
+                    preview(DocumentScanPreview(image: image, text: nil, pageIndex: index, pageCount: pdf.numberOfPages))
+                    try Task.checkCancellation()
                     var result = try recognize(image, index: index, pointSize: CGSize(width: width, height: height), includeNames: includeNames)
                     if let nativePage = textPDF?.page(at: index) {
                         supplementNativeText(nativePage, cgPage: page, result: &result, includeNames: includeNames)
@@ -100,6 +113,8 @@ public enum DocumentProcessor {
             }
             let options: [CFString: Any] = [kCGImageSourceCreateThumbnailFromImageAlways: true, kCGImageSourceCreateThumbnailWithTransform: true, kCGImageSourceThumbnailMaxPixelSize: max(width, height)]
             guard let image = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else { throw ShareSafeError.invalid("The image could not be decoded.") }
+            preview(DocumentScanPreview(image: image, text: nil, pageIndex: 0, pageCount: 1))
+            try Task.checkCancellation()
             progress("Reading text on the image…")
             let result = try recognize(image, index: 0, pointSize: CGSize(width: image.width, height: image.height), includeNames: includeNames)
             pages = [result.0]; findings = result.1

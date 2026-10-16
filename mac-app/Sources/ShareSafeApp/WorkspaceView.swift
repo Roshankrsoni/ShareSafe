@@ -43,7 +43,9 @@ struct WorkspaceView: View {
             HStack(spacing: 14) {
                 StudioSidebar().frame(width: 206)
                 VStack(spacing: 0) {
-                    if model.document != nil {
+                    if model.importingName != nil {
+                        DocumentScanView()
+                    } else if model.document != nil {
                         StudioToolbar()
                         HStack(spacing: 0) {
                             if model.showPagePane { PageNavigation().frame(width: 130); Divider() }
@@ -53,7 +55,7 @@ struct WorkspaceView: View {
                 }.frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(.regularMaterial).clipShape(RoundedRectangle(cornerRadius: 18))
                     .overlay(RoundedRectangle(cornerRadius: 18).stroke(Style.line))
-                if model.document != nil && model.showReviewPane {
+                if model.document != nil && model.showReviewPane && model.importingName == nil {
                     StudioInspector().frame(width: 314).background(.regularMaterial)
                         .clipShape(RoundedRectangle(cornerRadius: 18))
                         .overlay(RoundedRectangle(cornerRadius: 18).stroke(Style.line))

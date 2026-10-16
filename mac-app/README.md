@@ -17,6 +17,14 @@ bash scripts/build-app.sh
 
 The build script creates an ad-hoc signed, sandboxed app with hardened runtime and selected-file read/write access. It grants no network entitlement. Open `Package.swift` in Xcode to develop the project. No third-party dependencies are needed.
 
+See [the scan and regression verification report](docs/SCAN-VERIFICATION-2026-10-16.md) for the latest 47-test run, native UI checks, and remaining validation.
+
+## Import scanning
+
+Imports show the current page with a warm scanning beam while local recognition runs. The page counter follows the actual PDF page being processed. Cancel stops the import at the next processing checkpoint; Reduce Motion uses a static frame. Fast imports finish immediately without an artificial animation delay.
+
+See [the October feature research](docs/FEATURE-RESEARCH-2026-10.md) for the proposed recognition-quality review, visual privacy suggestions, batch queue, and export inspection report. These roadmap features are not implemented yet.
+
 ## Supported workflow
 
 - PDF, single-frame images, and UTF-8 plain text import; embedded PDF text extraction plus language-aware local OCR.

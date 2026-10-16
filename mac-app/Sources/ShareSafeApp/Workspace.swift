@@ -13,6 +13,9 @@ final class Workspace: ObservableObject {
     @Published var drawingMask = false
     @Published var busy = false
     @Published var progress = ""
+    @Published var importingName: String?
+    @Published var scanPreview: DocumentScanPreview?
+    @Published var cancelling = false
     @Published var error: String?
     @Published var notice: String?
     @Published var receipt: ExportReceipt?
@@ -127,13 +130,19 @@ final class Workspace: ObservableObject {
     func load(_ url: URL, isSample: Bool = false, prepareCopy: Bool = false, password: String? = nil) {
         guard !busy else { return }
         guard documents.count < 8 else { error = "Remove a document before adding another. A session holds up to eight documents."; return }
-        busy = true; progress = "Opening document…"; error = nil; receipt = nil
+        busy = true; importingName = url.lastPathComponent; scanPreview = nil; cancelling = false
+        progress = "Opening document…"; error = nil; notice = nil; receipt = nil
         let includeNames = UserDefaults.standard.object(forKey: "detectNames") as? Bool ?? true
         let id = UUID(); operationID = id
         task = Task {
             let worker = Task.detached(priority: .userInitiated) {
-                try DocumentProcessor.load(url: url, includeNames: includeNames, prepareCopy: prepareCopy, password: password) { message in
-                    Task { @MainActor [weak self] in if self?.operationID == id { self?.progress = message } }
+                try DocumentProcessor.load(url: url, includeNames: includeNames, prepareCopy: prepareCopy, password: password, preview: { preview in
+                    Task { @MainActor [weak self] in
+                        guard let self, self.operationID == id, !self.cancelling else { return }
+                        self.scanPreview = preview
+                    }
+                }) { message in
+                    Task { @MainActor [weak self] in if self?.operationID == id && self?.cancelling == false { self?.progress = message } }
                 }
             }
             do {
@@ -151,10 +160,10 @@ final class Workspace: ObservableObject {
                 pendingPDFImport = PDFImportRequest(url: url, isSample: isSample, needsPassword: true, password: nil, prepareCopy: prepareCopy)
             } catch is CancellationError { notice = "Import cancelled." }
             catch { self.error = error.localizedDescription }
-            busy = false; progress = ""; operationID = UUID()
+            busy = false; progress = ""; operationID = UUID(); importingName = nil; scanPreview = nil; cancelling = false
         }
     }
-    func cancel() { task?.cancel(); progress = "Cancelling after the current page…" }
+    func cancel() { cancelling = true; task?.cancel(); progress = "Cancelling after the current page…" }
     func removeSelected() { guard !busy else { return }; pendingRemovalID = selectedID }
     func confirmRemoval() {
         guard !busy, let id = pendingRemovalID else { return }
@@ -248,7 +257,7 @@ final class Workspace: ObservableObject {
         task = Task {
             let worker = Task.detached(priority: .userInitiated) {
                 let result = try SafeExporter.export(snapshot) { message in
-                    Task { @MainActor [weak self] in if self?.operationID == id { self?.progress = message } }
+                    Task { @MainActor [weak self] in if self?.operationID == id && self?.cancelling == false { self?.progress = message } }
                 }
                 try ExportFileStore.save(result.data, to: url, protecting: sources)
                 return result
@@ -258,7 +267,7 @@ final class Workspace: ObservableObject {
                 receipt = ExportReceipt(url: url, hash: result.sha256, checks: result.checks, size: result.data.count)
             } catch is CancellationError { notice = "Export cancelled. No file was saved." }
             catch { self.error = error.localizedDescription }
-            busy = false; progress = ""; operationID = UUID()
+            busy = false; progress = ""; operationID = UUID(); importingName = nil; scanPreview = nil; cancelling = false
         }
     }
 }
